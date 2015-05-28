@@ -1,0 +1,36 @@
+{
+  "name": "joigoose",
+  "version": "1.0.1",
+  "description": "Joi validation for your Mongoose models without the hassle of maintaining two schemas",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "lab test -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yoitsro/joigoose"
+  },
+  "keywords": [
+    "joi",
+    "mongoose",
+    "validation",
+    "schema",
+    "model",
+    "hapi"
+  ],
+  "author": "Ro Ramtohul",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yoitsro/joigoose/issues"
+  },
+  "homepage": "https://github.com/yoitsro/joigoose",
+  "dependencies": {
+    "hoek": "^2.14.0",
+    "joi": "^6.4.2"
+  },
+  "devDependencies": {
+    "code": "^1.4.0",
+    "lab": "^5.9.0",
+    "mongoose": ">=3.8.x"
+  }
+}
