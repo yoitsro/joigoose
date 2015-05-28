@@ -11,6 +11,7 @@ var L = Joi.alternatives;
 var D = Joi.date;
 var B = Joi.boolean;
 var Y = Joi.binary;
+var Any = Joi.any;
 
 // Test shortcuts
 var Code = require('code');
@@ -100,7 +101,7 @@ describe('Joigoose converter', function() {
     it('should convert a Joi object with an ObjectId to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ 
-            m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: Mongoose.Schema.Types.ObjectId })
+            m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' })
         }));
 
         expect(output).to.exist();
@@ -108,6 +109,21 @@ describe('Joigoose converter', function() {
         expect(output.m_id.type).to.exist();
         expect(output.m_id.type).to.equal(Mongoose.Schema.Types.ObjectId);
         expect(output.m_id.validate).to.exist();
+
+        return done();
+    });
+
+    it('should convert a Joi object with a Mixed type to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ 
+            other_info: Any()
+        }));
+
+        expect(output).to.exist();
+        expect(output.other_info).to.exist();
+        expect(output.other_info.type).to.exist();
+        expect(output.other_info.type).to.equal(Mongoose.Schema.Types.Mixed);
+        expect(output.other_info.validate).to.exist();
 
         return done();
     });
