@@ -19,20 +19,22 @@ var Mongoose = require('mongoose');
 var Joigoose = require('joigoose')(Mongoose);
 ```
 
-#### 2. Write your Joi schema (look here to see how to specify ObjectIds!)
+#### 2. Write your Joi schema (see here about how to specify ObjectIds!)
 
 ##### Things to know!
 Mongoose specific options can be specified in the meta object (see below).
 Arrays with items of different types will end up with the Mongoose type `Mixed`.
+Ideally, Joi schemas shouldn't have to contain Mongoose specific types, such as `Mongoose.Schema.Types.ObjectId` because these Joi schemas may be required to work on frontend clients too.
 
 ```javascript
-var joiUserSchema = O({
-    name: O({
-        first: S().required(),
-        last: S().required()
+var joiUserSchema = Joi.object({
+    name: Joi.object({
+        first: Joi.string().required(),
+        last: Joi.string().required()
     }),
-    email: S().email().required(),
-    bestFriend: S().meta({ type: Mongoose.Schema.Types.ObjectId, ref: 'User' })
+    email: Joi.string().email().required(),
+    bestFriend: Joi.string().meta({ type: 'ObjectId', ref: 'User' }),
+    metaInfo: Joi.any()
 });
 ```
 
@@ -52,7 +54,10 @@ var aGoodUser = new User({
         first: 'Barry',
         last: 'White'
     },
-    email: 'barry@white.com'
+    email: 'barry@white.com',
+    metaInfo: {
+        hobbies: ['cycling', 'dancing', 'listening to Shpongle']
+    }
 });
 
 aGoodUser.save(function (err, result) {
