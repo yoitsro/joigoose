@@ -169,6 +169,39 @@ describe('Joigoose converter', function() {
         return done();
     });
 
+    it('should convert a Joi object with alternatives of zero types to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ favouriteNumber: L() }));
+
+        expect(output).to.exist();
+        expect(output.favouriteNumber).to.exist();
+        expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
+
+        return done();
+    });
+
+    it('should convert a Joi object with alternatives of the same type to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ contactDetail: L([S().regex(/\+\d/i), S().email()]) }));
+
+        expect(output).to.exist();
+        expect(output.contactDetail).to.exist();
+        expect(output.contactDetail.type).to.equal(String);
+
+        return done();
+    });
+
+    it('should convert a Joi object with alternatives of different types to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ favouriteNumber: L([S(), N().integer()]) }));
+
+        expect(output).to.exist();
+        expect(output.favouriteNumber).to.exist();
+        expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
+
+        return done();
+    });
+
     it('should convert a Joi object with an array of mixed types to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ hobbies: A().single().items(S(), N()) }));
@@ -302,7 +335,7 @@ describe('Joigoose converter', function() {
             var output = Joigoose.convert(O({
                 image: Y() 
             }));
-        }).to.throw(Error, 'Unsupported Joi type: binary! Raise an issue on GitHub if you\'d like it to be added!');
+        }).to.throw(Error, 'Unsupported Joi type: "binary"! Raise an issue on GitHub if you\'d like it to be added!');
 
         return done();
     });
