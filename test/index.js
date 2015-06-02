@@ -379,20 +379,18 @@ describe('Joigoose mongoose validation wrapper', function () {
 
 describe('Joigoose integration tests', function () {
 
-    var User;
+    var joiUserSchema = O({
+        name: O({
+            first: S().required(),
+            last: S().required()
+        }),
+        email: S().email().required()
+    });
 
     it('should generate and validate a schema using a Joi object', function (done) {
 
-        var joiUserSchema = O({
-            name: O({
-                first: S().required(),
-                last: S().required()
-            }),
-            email: S().email().required()
-        });
-
         var mongooseUserSchema = Joigoose.convert(joiUserSchema);
-        User = Mongoose.model('User', mongooseUserSchema);
+        var User = Mongoose.model('User', mongooseUserSchema);
 
         var newUser = new User({
             name: {
@@ -411,6 +409,9 @@ describe('Joigoose integration tests', function () {
 
     it('should generate and unsuccessfully validate a schema using a Joi object', function (done) {
 
+        var mongooseUserSchema = Joigoose.convert(joiUserSchema);
+        var User = Mongoose.model('User2', mongooseUserSchema);
+
         var newUser = new User({
             name: {
                 first: 'Barry',
@@ -422,7 +423,37 @@ describe('Joigoose integration tests', function () {
         return newUser.validate(function (err) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('User validation failed');
+            expect(err.message).to.equal('User2 validation failed');
+            return done();
+        });
+    });
+
+    it('should validate ObjectIds as strings and as actual ObjectId objects', function (done) {
+
+        var joiUserSchemaWithObjectId = O({
+            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
+            name: O({
+                first: S().required(),
+                last: S().required()
+            }),
+            email: S().email().required()
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('User3', mongooseUserSchema);
+
+        var newUser = new User({
+            _id: 'abcdef012345abcdef012345',
+            name: {
+                first: 'Barry',
+                last: 'White'
+            },
+            email: 'barry@white.com'
+        });
+
+        return newUser.validate(function (err) {
+
+            expect(err).to.not.exist();
             return done();
         });
     });
