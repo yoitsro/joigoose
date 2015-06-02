@@ -1,6 +1,5 @@
 var Joi = require('joi');
 var Mongoose = require('mongoose');
-var Joigoose = require('../lib')(Mongoose);
 
 // Joi shortcuts
 var S = Joi.string;
@@ -24,7 +23,42 @@ var before = lab.before;
 var after = lab.after;
 var expect = Code.expect;
 
+describe('Joigoose initializer', function() {
+
+    it('should allow for global Joi configuration options to be passed in', function (done) {
+
+        var Joigoose = require('../lib')(Mongoose, {convert: false});
+
+        var schemaWithAString = O({
+            favouriteHex: S().lowercase()
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(schemaWithAString);
+        var User = Mongoose.model('User4', mongooseUserSchema);
+
+        var newUser = new User({
+            favouriteHex:  'ABCDEF'
+        });
+
+        return newUser.validate(function (err) {
+
+            expect(err).to.exist();
+            expect(err.errors.favouriteHex).to.exist();
+            expect(err.errors.favouriteHex.message).to.equal('Validator failed for path `favouriteHex` with value `ABCDEF`');
+            return done();
+        });
+    });
+});
+
 describe('Joigoose converter', function() {
+
+    var Joigoose;
+
+    before(function (done) {
+        
+        Joigoose = require('../lib')(Mongoose);
+        return done();
+    });
     
     it('cannot convert a blank object', function (done) {
         
@@ -357,6 +391,15 @@ describe('Joigoose converter', function() {
 });
 
 describe('Joigoose mongoose validation wrapper', function () {
+
+    var Joigoose;
+
+    before(function (done) {
+
+        Joigoose = require('../lib')(Mongoose);
+        return done();
+    });
+
     
     it('returns false for a failed validation', function (done) {
         
@@ -367,7 +410,7 @@ describe('Joigoose mongoose validation wrapper', function () {
         });
     });
 
-    it('returns true for a successfull validation', function (done) {
+    it('returns true for a successful validation', function (done) {
         
         return Joigoose.mongooseValidateWrapper(S(), 'defsisastringyo', function (result) {
 
@@ -379,12 +422,21 @@ describe('Joigoose mongoose validation wrapper', function () {
 
 describe('Joigoose integration tests', function () {
 
-    var joiUserSchema = O({
-        name: O({
-            first: S().required(),
-            last: S().required()
-        }),
-        email: S().email().required()
+    var Joigoose;
+    var joiUserSchema;
+
+    before(function (done) {
+
+        Joigoose = require('../lib')(Mongoose);
+        joiUserSchema = O({
+            name: O({
+                first: S().required(),
+                last: S().required()
+            }),
+            email: S().email().required()
+        });
+
+        return done();
     });
 
     it('should generate and validate a schema using a Joi object', function (done) {
@@ -457,5 +509,4 @@ describe('Joigoose integration tests', function () {
             return done();
         });
     });
-
 });
