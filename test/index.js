@@ -289,6 +289,22 @@ describe('Joigoose converter', function() {
         return done();
     });
 
+    it('should convert a nested required Joi object to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({
+            name: O({
+                first: S(),
+                last: S()
+            }).required()
+        }));
+        
+        expect(output).to.exist();
+        expect(output.name).to.exist();
+        expect(output.name.required).to.not.exist();
+
+        return done();
+    });
+
     it('should convert a Joi object with a required string to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({
