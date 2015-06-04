@@ -181,24 +181,21 @@ describe('Joigoose converter', function() {
 
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
-        expect(output.hobbies[0]).to.exist();
-        expect(output.hobbies[0].type).to.exist();
-        expect(output.hobbies[0].type).to.equal(Mongoose.Schema.Types.Mixed);
-        expect(output.hobbies[0].validate).to.not.exist();
+        expect(output.hobbies.type).to.exist();
+        expect(output.hobbies.type).to.deep.equal([Mongoose.Schema.Types.Mixed]);
+        expect(output.hobbies.type.validate).to.not.exist();
 
         return done();
     });
 
     it('should convert a Joi object with an array of strings to a Mongoose schema', function (done) {
 
-        var output = Joigoose.convert(O({ hobbies: A().single().items(S()) }));
+        var output = Joigoose.convert(O({ hobbies: A().items( S() ) }));
 
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
-        expect(output.hobbies[0]).to.exist();
-        expect(output.hobbies[0].type).to.exist();
-        expect(output.hobbies[0].type).to.equal(String);
-        expect(output.hobbies[0].validate).to.exist();
+        expect(output.hobbies.type).to.exist();
+        expect(output.hobbies.type[0].type).to.equal( String );
 
         return done();
     });
@@ -242,10 +239,9 @@ describe('Joigoose converter', function() {
 
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
-        expect(output.hobbies[0]).to.exist();
-        expect(output.hobbies[0].type).to.exist();
-        expect(output.hobbies[0].type).to.equal(Mongoose.Schema.Types.Mixed);
-        expect(output.hobbies[0].validate).to.not.exist();
+        expect(output.hobbies.type).to.exist();
+        expect(output.hobbies.type[0]).to.equal(Mongoose.Schema.Types.Mixed);
+        expect(output.hobbies.validate).to.exist();
 
         return done();
     });
@@ -518,6 +514,36 @@ describe('Joigoose integration tests', function () {
             },
             email: 'barry@white.com'
         });
+
+        return newUser.validate(function (err) {
+
+            expect(err).to.not.exist();
+            return done();
+        });
+    });
+
+    it('should apply defaults when they\'re not specified', function (done) {
+
+        var joiUserSchemaWithObjectId = O({
+            name: O({
+                first: S().default('Barry'),
+                last: S().default('White')
+            }),
+            registered: B().default(false),
+            age: N().default(21),
+            hobbies: A().default(['cycling'])
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('User5', mongooseUserSchema);
+
+        var newUser = new User();
+
+        expect(newUser.name.first).to.equal('Barry');
+        expect(newUser.name.last).to.equal('White');
+        expect(newUser.registered).to.equal(false);
+        expect(newUser.age).to.equal(21);
+        expect(newUser.hobbies).to.deep.equal(['cycling']);
 
         return newUser.validate(function (err) {
 
