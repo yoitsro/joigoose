@@ -182,7 +182,7 @@ describe('Joigoose converter', function() {
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
         expect(output.hobbies.type).to.exist();
-        expect(output.hobbies.type).to.deep.equal([Mongoose.Schema.Types.Mixed]);
+        expect(output.hobbies.type).to.deep.equal(Array);
         expect(output.hobbies.type.validate).to.not.exist();
 
         return done();
@@ -195,7 +195,7 @@ describe('Joigoose converter', function() {
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
         expect(output.hobbies.type).to.exist();
-        expect(output.hobbies.type[0].type).to.equal( String );
+        expect(output.hobbies.type).to.equal(Array);
 
         return done();
     });
@@ -240,7 +240,7 @@ describe('Joigoose converter', function() {
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
         expect(output.hobbies.type).to.exist();
-        expect(output.hobbies.type[0]).to.equal(Mongoose.Schema.Types.Mixed);
+        expect(output.hobbies.type).to.equal(Array);
         expect(output.hobbies.validate).to.exist();
 
         return done();
@@ -517,6 +517,37 @@ describe('Joigoose integration tests', function () {
 
         return newUser.validate(function (err) {
 
+            expect(err).to.not.exist();
+            return done();
+        });
+    });
+
+    it('should validate nested ObjectIds as strings and as actual ObjectId objects', function (done) {
+
+        var hobbiesSchema = O({
+            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
+            name: S().required()
+        });
+
+        var joiUserSchemaWithObjectId = O({
+            hobbies: A().items(hobbiesSchema),
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('UserHobbies', mongooseUserSchema);
+
+        var newUser = new User({
+            hobbies: [{
+                _id: 'abcdef012345abcdef012345',
+                name: 'cycling'
+            }, {
+                _id: 'abcdef012345abcdef01234a',
+                name: 'running'
+            }]
+        });
+
+        return newUser.validate(function (err) {
+            
             expect(err).to.not.exist();
             return done();
         });
