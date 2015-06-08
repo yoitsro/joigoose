@@ -64,7 +64,6 @@ describe('Joigoose converter', function() {
         
         expect(function() {
             var output = Joigoose.convert();
-            console.log(output);
         }).to.throw(Error, 'Ensure the value you\'re trying to convert exists!');
 
         return done();
@@ -132,16 +131,33 @@ describe('Joigoose converter', function() {
         return done();
     });
 
-    it('should convert a Joi object with an ObjectId to a Mongoose schema', function (done) {
+    it('should convert a Joi object with an ObjectId and reference to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ 
-            m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' })
+            m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Merchant' })
         }));
 
         expect(output).to.exist();
         expect(output.m_id).to.exist();
         expect(output.m_id.type).to.exist();
         expect(output.m_id.type).to.equal(Mongoose.Schema.Types.ObjectId);
+        expect(output.m_id.ref).to.equal('Merchant');
+        expect(output.m_id.validate).to.exist();
+
+        return done();
+    });
+
+    it('should convert a Joi object with an ObjectId and reference in a different meta tag to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ 
+            m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId'}).meta({ref: 'Merchant' })
+        }));
+
+        expect(output).to.exist();
+        expect(output.m_id).to.exist();
+        expect(output.m_id.type).to.exist();
+        expect(output.m_id.type).to.equal(Mongoose.Schema.Types.ObjectId);
+        expect(output.m_id.ref).to.equal('Merchant');
         expect(output.m_id.validate).to.exist();
 
         return done();
@@ -182,7 +198,7 @@ describe('Joigoose converter', function() {
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
         expect(output.hobbies.type).to.exist();
-        expect(output.hobbies.type).to.deep.equal(Array);
+        expect(output.hobbies.type).to.deep.equal([]);
         expect(output.hobbies.type.validate).to.not.exist();
 
         return done();
@@ -195,7 +211,22 @@ describe('Joigoose converter', function() {
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
         expect(output.hobbies.type).to.exist();
-        expect(output.hobbies.type).to.equal(Array);
+        expect(output.hobbies.type[0]).to.exist();
+        expect(output.hobbies.type[0].type).to.equal(String);
+        expect(output.hobbies.type[0].validate).to.exist();
+
+        return done();
+    });
+
+    it('should convert a Joi object with an array of strings with different schemas to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ hobbies: A().items( S().length(10), S().valid('yo!') ) }));
+
+        expect(output).to.exist();
+        expect(output.hobbies).to.exist();
+        expect(output.hobbies.type).to.exist();
+        expect(output.hobbies.type[0]).to.exist();
+        expect(output.hobbies.type[0]).to.equal(String);
 
         return done();
     });
@@ -203,9 +234,9 @@ describe('Joigoose converter', function() {
     it('should convert a Joi object with alternatives of zero types to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ favouriteNumber: L() }));
-
         expect(output).to.exist();
         expect(output.favouriteNumber).to.exist();
+        expect(output.favouriteNumber.type).to.exist();
         expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
 
         return done();
@@ -213,7 +244,18 @@ describe('Joigoose converter', function() {
 
     it('should convert a Joi object with alternatives of the same type to a Mongoose schema', function (done) {
 
-        var output = Joigoose.convert(O({ contactDetail: L([S().regex(/\+\d/i), S().email()]) }));
+        var output = Joigoose.convert(O({ contactDetail: L([ S().regex(/\+\d/i), S().email() ]) }));
+        
+        expect(output).to.exist();
+        expect(output.contactDetail).to.exist();
+        expect(output.contactDetail.type).to.equal(String);
+
+        return done();
+    });
+
+    it('should convert a Joi object with alternatives containing one type with one scema to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({ contactDetail: L([ S().email() ]) }));
 
         expect(output).to.exist();
         expect(output.contactDetail).to.exist();
@@ -240,7 +282,8 @@ describe('Joigoose converter', function() {
         expect(output).to.exist();
         expect(output.hobbies).to.exist();
         expect(output.hobbies.type).to.exist();
-        expect(output.hobbies.type).to.equal(Array);
+        expect(output.hobbies.type[0]).to.exist();
+        expect(output.hobbies.type[0]).to.equal(Mongoose.Schema.Types.Mixed);
         expect(output.hobbies.validate).to.exist();
 
         return done();
@@ -370,6 +413,21 @@ describe('Joigoose converter', function() {
         expect(output.name).to.exist();
         expect(output.name.type).to.equal(String);
         expect(output.name.index).to.equal(true);
+        expect(output.name.validate).to.exist();
+
+        return done();
+    });
+
+
+    it('should convert a Joi object with metadata to a Mongoose schema excluding metadata strings', function (done) {
+
+        var output = Joigoose.convert(O({
+            name: S().meta('no no no')
+        }));
+
+        expect(output).to.exist();
+        expect(output.name).to.exist();
+        expect(output.name.type).to.equal(String);
         expect(output.name.validate).to.exist();
 
         return done();
@@ -525,7 +583,7 @@ describe('Joigoose integration tests', function () {
     it('should validate nested ObjectIds as strings and as actual ObjectId objects', function (done) {
 
         var hobbiesSchema = O({
-            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
+            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
             name: S().required()
         });
 

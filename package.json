@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/yoitsro/joigoose",
   "dependencies": {
+    "hoek": "^2.14.0",
     "joi": "^6.4.2"
   },
   "devDependencies": {
