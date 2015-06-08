@@ -641,6 +641,27 @@ describe('Joigoose integration tests', function () {
         });
     });
 
+    it('should make sure value exists in the wrapper', function (done) {
+
+        var joiUserSchemaWithObjectId = O({
+            name: S()
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('User6', mongooseUserSchema);
+
+        var newUser = new User({
+            name: null
+        });
+
+        return newUser.validate(function (err) {
+
+            expect(err).to.exist();
+            expect(err.message).to.equal('User6 validation failed');
+            return done();
+        });
+    });
+
     it('should deal with alternative validation properly', function (done) {
 
         var schema = O({
