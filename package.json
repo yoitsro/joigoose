@@ -1,6 +1,6 @@
 {
   "name": "joigoose",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Joi validation for your Mongoose models without the hassle of maintaining two schemas",
   "main": "lib/index.js",
   "scripts": {

@@ -284,7 +284,7 @@ describe('Joigoose converter', function() {
         expect(output.hobbies.type).to.exist();
         expect(output.hobbies.type[0]).to.exist();
         expect(output.hobbies.type[0]).to.equal(Mongoose.Schema.Types.Mixed);
-        expect(output.hobbies.validate).to.exist();
+        expect(output.hobbies.validate).to.not.exist();
 
         return done();
     });
@@ -550,7 +550,7 @@ describe('Joigoose integration tests', function () {
         });
     });
 
-    it('should validate ObjectIds as strings and as actual ObjectId objects', function (done) {
+    it('should validate ObjectIds as strings', function (done) {
 
         var joiUserSchemaWithObjectId = O({
             _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
@@ -580,7 +580,38 @@ describe('Joigoose integration tests', function () {
         });
     });
 
-    it('should validate nested ObjectIds as strings and as actual ObjectId objects', function (done) {
+    it('should validate ObjectIds as ObjectIds', function (done) {
+
+        var joiUserSchemaWithObjectId = O({
+            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
+            name: O({
+                first: S().required(),
+                last: S().required()
+            }),
+            email: S().email().required()
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('User3b', mongooseUserSchema);
+
+        var newUser = new User({
+            _id: new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
+            name: {
+                first: 'Barry',
+                last: 'White'
+            },
+            email: 'barry@white.com'
+        });
+
+        return newUser.validate(function (err) {
+
+            expect(newUser._id.toString()).to.equal('abcdef012345abcdef012345');
+            expect(err).to.not.exist();
+            return done();
+        });
+    });
+
+    it('should validate nested ObjectIds as strings', function (done) {
 
         var hobbiesSchema = O({
             _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
@@ -602,6 +633,61 @@ describe('Joigoose integration tests', function () {
                 _id: 'abcdef012345abcdef01234a',
                 name: 'running'
             }]
+        });
+
+        return newUser.validate(function (err) {
+            
+            expect(err).to.not.exist();
+            return done();
+        });
+    });
+
+    it('should validate nested ObjectIds as actual ObjectId objects', function (done) {
+
+        var hobbiesSchema = O({
+            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
+            name: S().required()
+        });
+
+        var joiUserSchemaWithObjectId = O({
+            hobbies: A().items(hobbiesSchema),
+        }); 
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('UserHobbies2', mongooseUserSchema);
+
+        var newUser = new User({
+            hobbies: [{
+                _id: new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
+                name: 'cycling'
+            }, {
+                _id: new Mongoose.Types.ObjectId('abcdef012345abcdef01234a'),
+                name: 'running'
+            }]
+        });
+
+        return newUser.validate(function (err) {
+            
+            expect(err).to.not.exist();
+            return done();
+        });
+    });
+
+    it('should validate ObjectIds in arrays', function (done) {
+
+        var joiUserSchemaWithObjectId = O({
+            _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId'}),
+            hobbies: A().items(S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' })),
+        });
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var User = Mongoose.model('UserHobbies3', mongooseUserSchema);
+
+        var newUser = new User({
+            hobbies: [
+                new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
+                new Mongoose.Types.ObjectId('abcdef012345abcdef01234a')
+            ]
         });
 
         return newUser.validate(function (err) {
