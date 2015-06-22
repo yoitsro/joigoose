@@ -147,22 +147,6 @@ describe('Joigoose converter', function() {
         return done();
     });
 
-    it('should convert a Joi object with an ObjectId and reference in a different meta tag to a Mongoose schema', function (done) {
-
-        var output = Joigoose.convert(O({ 
-            m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId'}).meta({ref: 'Merchant' })
-        }));
-
-        expect(output).to.exist();
-        expect(output.m_id).to.exist();
-        expect(output.m_id.type).to.exist();
-        expect(output.m_id.type).to.equal(Mongoose.Schema.Types.ObjectId);
-        expect(output.m_id.ref).to.equal('Merchant');
-        expect(output.m_id.validate).to.exist();
-
-        return done();
-    });
-
     it('should convert a Joi object with an array containing an ObjectId to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({
@@ -748,7 +732,7 @@ describe('Joigoose integration tests', function () {
 
     it('should apply defaults when they\'re not specified', function (done) {
 
-        var joiUserSchemaWithObjectId = O({
+        var joiUserSchema = O({
             name: O({
                 first: S().default('Barry'),
                 last: S().default('White')
@@ -758,7 +742,7 @@ describe('Joigoose integration tests', function () {
             hobbies: A().default(['cycling'])
         }); 
 
-        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var mongooseUserSchema = Joigoose.convert(joiUserSchema);
         var User = Mongoose.model('User5', mongooseUserSchema);
 
         var newUser = new User();
@@ -778,11 +762,11 @@ describe('Joigoose integration tests', function () {
 
     it('should make sure value exists in the wrapper', function (done) {
 
-        var joiUserSchemaWithObjectId = O({
+        var joiUserSchema = O({
             name: S()
         }); 
 
-        var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+        var mongooseUserSchema = Joigoose.convert(joiUserSchema);
         var User = Mongoose.model('User6', mongooseUserSchema);
 
         var newUser = new User({
