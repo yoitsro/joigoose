@@ -163,6 +163,27 @@ describe('Joigoose converter', function() {
         return done();
     });
 
+    it('should convert a Joi object with an array containing an ObjectId to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O({
+            name: S(),
+            merchants: A().items( O({
+                _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Merchant' }),
+                name: S()
+            }) )
+        }));
+
+        expect(output).to.exist();
+        expect(output.name).to.exist();
+        expect(output.name.type).to.equal(String);
+        expect(output.merchants).to.exist();
+        expect(output.merchants.type[0]).to.exist();
+        expect(output.merchants.type[0]._id).to.exist();
+        expect(output.merchants.type[0]._id.type).to.equal(Mongoose.Schema.Types.ObjectId);
+
+        return done();
+    });
+
     it('should convert a Joi object with a Mixed type to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ 
