@@ -26,11 +26,11 @@
   "homepage": "https://github.com/yoitsro/joigoose",
   "dependencies": {
     "hoek": "^2.14.0",
-    "joi": "^6.4.2"
+    "joi": "^6.7.1"
   },
   "devDependencies": {
     "code": "^1.4.0",
     "lab": "^5.9.0",
-    "mongoose": ">=3.8.x"
+    "mongoose": "^4.1.7"
   }
 }

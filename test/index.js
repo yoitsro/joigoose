@@ -827,4 +827,57 @@ describe('Joigoose integration tests', function () {
             });
         });
     });
+
+    it('should deal with alternative validation properly where the alternatives are two different objects', function (done) {
+
+        var schema = O({
+            delivery_period: L([
+                O({
+                    min: N().min(0).integer().empty([null, '']),
+                    max: N().min(0).integer().empty([null, ''])
+                }).description('A range of days relative to now when this order will arrive.'),
+                O({
+                    lower: N().min(0).integer().empty([null, '']),
+                    upper: N().min(0).integer().empty([null, ''])
+                }).description('A range of days relative to now when this order will arrive.'),
+            ])
+        }); 
+
+        var mongooseSchema = Joigoose.convert(schema);
+        var DeliveryMethod = Mongoose.model('DeliveryMethod2', mongooseSchema);
+
+        var deliveryMethod = new DeliveryMethod({
+            delivery_period: {
+                min: 1,
+                max: 2
+            }
+        });
+
+        var deliveryMethod2 = new DeliveryMethod({
+            delivery_period: {
+                lower: 10,
+                upper: 20
+            }
+        }); 
+
+        var deliveryMethod3 = new DeliveryMethod({
+            delivery_period: 'lol'
+        }); 
+
+        return deliveryMethod.validate(function (err) {
+
+            expect(err).to.not.exist();
+
+            return deliveryMethod2.validate(function (err) {
+
+                expect(err).to.not.exist();
+
+                return deliveryMethod3.validate(function (err) {
+
+                    expect(err).to.exist();
+                    return done();
+                });
+            });
+        });
+    });
 });
