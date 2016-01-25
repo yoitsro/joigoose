@@ -28,12 +28,12 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
-    "hoek": "^2.14.0",
-    "joi": "^6.7.1"
+    "hoek": "^2.16.3",
+    "joi": "^6.10.1"
   },
   "devDependencies": {
-    "code": "^1.4.0",
-    "lab": "^5.9.0",
-    "mongoose": "^4.1.7"
+    "code": "^1.5.0",
+    "lab": "^6.2.0",
+    "mongoose": "^4.3.7"
   }
 }
