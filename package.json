@@ -24,6 +24,9 @@
     "url": "https://github.com/yoitsro/joigoose/issues"
   },
   "homepage": "https://github.com/yoitsro/joigoose",
+  "engines": {
+    "node": ">=0.10.0"
+  },
   "dependencies": {
     "hoek": "^2.14.0",
     "joi": "^6.7.1"
