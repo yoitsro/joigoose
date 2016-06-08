@@ -31,7 +31,7 @@ describe('Joigoose initializer', function() {
 
         var schemaWithAString = O({
             favouriteHex: S().lowercase()
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(schemaWithAString);
         var User = Mongoose.model('User4', mongooseUserSchema);
@@ -55,13 +55,13 @@ describe('Joigoose converter', function() {
     var Joigoose;
 
     before(function (done) {
-        
+
         Joigoose = require('../lib')(Mongoose);
         return done();
     });
-    
+
     it('cannot convert a blank object', function (done) {
-        
+
         expect(function() {
             var output = Joigoose.convert();
         }).to.throw(Error, 'Ensure the value you\'re trying to convert exists!');
@@ -70,7 +70,7 @@ describe('Joigoose converter', function() {
     });
 
     it('should not try to convert a non-Joi object', function (done) {
-        
+
         expect(function() {
             var output = Joigoose.convert('hello!');
         }).to.throw(Error, 'Object schema must be a valid object');
@@ -79,20 +79,30 @@ describe('Joigoose converter', function() {
     });
 
     it('should convert a string object', function (done) {
-        
+
         var output = Joigoose.convert(S());
         expect(output).to.exist();
         expect(output.type).to.exist();
         expect(output.type).to.equal(String);
         expect(output.validate).to.exist();
-        
+
+        return done();
+    });
+
+    it('should convert a Joi object to a Mongoose schema', function (done) {
+
+        var output = Joigoose.convert(O());
+
+        expect(output).to.exist();
+        expect(output.type).to.equal(Mongoose.Schema.Types.Mixed);
+
         return done();
     });
 
     it('should convert a Joi object with a string to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ name: S() }));
-        
+
         expect(output).to.exist();
         expect(output.name).to.exist();
         expect(output.name.type).to.exist();
@@ -133,7 +143,7 @@ describe('Joigoose converter', function() {
 
     it('should convert a Joi object with an ObjectId and reference to a Mongoose schema', function (done) {
 
-        var output = Joigoose.convert(O({ 
+        var output = Joigoose.convert(O({
             m_id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Merchant' })
         }));
 
@@ -175,7 +185,7 @@ describe('Joigoose converter', function() {
         });
 
         schema = schema.keys({
-            merchants: A().items( 
+            merchants: A().items(
                 O({
                     _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Merchant' }),
                     name: S()
@@ -198,7 +208,7 @@ describe('Joigoose converter', function() {
 
     it('should convert a Joi object with a Mixed type to a Mongoose schema', function (done) {
 
-        var output = Joigoose.convert(O({ 
+        var output = Joigoose.convert(O({
             other_info: Any()
         }));
 
@@ -213,7 +223,7 @@ describe('Joigoose converter', function() {
 
     it('should convert a Joi object with a boolean to a Mongoose schema', function (done) {
 
-        var output = Joigoose.convert(O({ 
+        var output = Joigoose.convert(O({
             enabled: B()
         }));
 
@@ -278,7 +288,7 @@ describe('Joigoose converter', function() {
     it('should convert a Joi object with alternatives of the same type to a Mongoose schema', function (done) {
 
         var output = Joigoose.convert(O({ contactDetail: L([ S().regex(/\+\d/i), S().email() ]) }));
-        
+
         expect(output).to.exist();
         expect(output.contactDetail).to.exist();
         expect(output.contactDetail.type).to.equal(String);
@@ -324,7 +334,7 @@ describe('Joigoose converter', function() {
 
     it('should convert a Joi object with a string and a number to a Mongoose schema', function (done) {
 
-        var output = Joigoose.convert(O({ 
+        var output = Joigoose.convert(O({
             age: N(),
             name: S()
         }));
@@ -369,7 +379,7 @@ describe('Joigoose converter', function() {
                 last: S()
             }).required()
         }));
-        
+
         expect(output).to.exist();
         expect(output.name).to.exist();
         expect(output.name.required).to.not.exist();
@@ -470,7 +480,7 @@ describe('Joigoose converter', function() {
 
         expect(function() {
             var output = Joigoose.convert(O({
-                image: Y() 
+                image: Y()
             }));
         }).to.throw(Error, 'Unsupported Joi type: "binary"! Raise an issue on GitHub if you\'d like it to be added!');
 
@@ -503,9 +513,9 @@ describe('Joigoose mongoose validation wrapper', function () {
         return done();
     });
 
-    
+
     it('returns false for a failed validation', function (done) {
-        
+
         return Joigoose.mongooseValidateWrapper(B(), 'obvsnotaboolean', function (result) {
 
             expect(result).to.equal(false);
@@ -514,7 +524,7 @@ describe('Joigoose mongoose validation wrapper', function () {
     });
 
     it('returns true for a successful validation', function (done) {
-        
+
         return Joigoose.mongooseValidateWrapper(S(), 'defsisastringyo', function (result) {
 
             expect(result).to.equal(true);
@@ -592,7 +602,7 @@ describe('Joigoose integration tests', function () {
                 last: S().required()
             }),
             email: S().email().required()
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
         var User = Mongoose.model('User3', mongooseUserSchema);
@@ -622,7 +632,7 @@ describe('Joigoose integration tests', function () {
                 last: S().required()
             }),
             email: S().email().required()
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
         var User = Mongoose.model('User3b', mongooseUserSchema);
@@ -653,7 +663,7 @@ describe('Joigoose integration tests', function () {
 
         var joiUserSchemaWithObjectId = O({
             hobbies: A().items(hobbiesSchema),
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
         var User = Mongoose.model('UserHobbies', mongooseUserSchema);
@@ -669,7 +679,7 @@ describe('Joigoose integration tests', function () {
         });
 
         return newUser.validate(function (err) {
-            
+
             expect(err).to.not.exist();
             return done();
         });
@@ -684,7 +694,7 @@ describe('Joigoose integration tests', function () {
 
         var joiUserSchemaWithObjectId = O({
             hobbies: A().items(hobbiesSchema),
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
         var User = Mongoose.model('UserHobbies2', mongooseUserSchema);
@@ -700,7 +710,7 @@ describe('Joigoose integration tests', function () {
         });
 
         return newUser.validate(function (err) {
-            
+
             expect(err).to.not.exist();
             return done();
         });
@@ -724,7 +734,7 @@ describe('Joigoose integration tests', function () {
         });
 
         return newUser.validate(function (err) {
-            
+
             expect(err).to.not.exist();
             return done();
         });
@@ -740,7 +750,7 @@ describe('Joigoose integration tests', function () {
             registered: B().default(false),
             age: N().default(21),
             hobbies: A().default(['cycling'])
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(joiUserSchema);
         var User = Mongoose.model('User5', mongooseUserSchema);
@@ -764,7 +774,7 @@ describe('Joigoose integration tests', function () {
 
         var joiUserSchema = O({
             name: S()
-        }); 
+        });
 
         var mongooseUserSchema = Joigoose.convert(joiUserSchema);
         var User = Mongoose.model('User6', mongooseUserSchema);
@@ -791,7 +801,7 @@ describe('Joigoose integration tests', function () {
                 }).description('A range of days relative to now when this order will arrive.'),
                 N().integer().min(0).max(6).empty([null, '']).description('A absolute day of the week when this order will arrive.')
             ])
-        }); 
+        });
 
         var mongooseSchema = Joigoose.convert(schema);
         var DeliveryMethod = Mongoose.model('DeliveryMethod', mongooseSchema);
@@ -805,11 +815,11 @@ describe('Joigoose integration tests', function () {
 
         var deliveryMethod2 = new DeliveryMethod({
             delivery_period: 5
-        }); 
+        });
 
         var deliveryMethod3 = new DeliveryMethod({
             delivery_period: 'lol'
-        }); 
+        });
 
         return deliveryMethod.validate(function (err) {
 
@@ -841,7 +851,7 @@ describe('Joigoose integration tests', function () {
                     upper: N().min(0).integer().empty([null, ''])
                 }).description('A range of days relative to now when this order will arrive.'),
             ])
-        }); 
+        });
 
         var mongooseSchema = Joigoose.convert(schema);
         var DeliveryMethod = Mongoose.model('DeliveryMethod2', mongooseSchema);
@@ -858,11 +868,11 @@ describe('Joigoose integration tests', function () {
                 lower: 10,
                 upper: 20
             }
-        }); 
+        });
 
         var deliveryMethod3 = new DeliveryMethod({
             delivery_period: 'lol'
-        }); 
+        });
 
         return deliveryMethod.validate(function (err) {
 
