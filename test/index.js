@@ -44,7 +44,7 @@ describe('Joigoose initializer', function() {
 
             expect(err).to.exist();
             expect(err.errors.favouriteHex).to.exist();
-            expect(err.errors.favouriteHex.message).to.equal('Validator failed for path `favouriteHex` with value `ABCDEF`');
+            expect(err.errors.favouriteHex.message).to.equal('"ABCDEF" must only contain lowercase characters');
             return done();
         });
     });
@@ -592,6 +592,30 @@ describe('Joigoose integration tests', function () {
             return done();
         });
     });
+
+    it('should returns default joi error messages', function (done) {
+
+        var mongooseUserSchema = Joigoose.convert(joiUserSchema);
+        var User = Mongoose.model('User2b', mongooseUserSchema);
+
+        var newUser = new User({
+            name: {
+                first: 'Barry',
+                last: 'White'
+            },
+            email: 'Im not an email address!'
+        });
+
+        return newUser.validate(function (err) {
+
+            expect(err).to.exist();
+            expect(err.message).to.equal('User2b validation failed');
+            expect(err.errors["email"]).to.exist();
+            expect(err.errors["email"].message).to.equal('"Im not an email address!" must be a valid email')
+            return done();
+        });
+    });
+
 
     it('should validate ObjectIds as strings', function (done) {
 
