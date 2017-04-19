@@ -1,6 +1,6 @@
 {
   "name": "joigoose",
-  "version": "1.5.7",
+  "version": "2.0.0",
   "description": "Joi validation for your Mongoose models without the hassle of maintaining two schemas",
   "main": "lib/index.js",
   "scripts": {
@@ -25,15 +25,15 @@
   },
   "homepage": "https://github.com/yoitsro/joigoose",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4.0.0"
   },
   "dependencies": {
-    "hoek": "^2.16.3",
-    "joi": "^6.10.1"
+    "hoek": "^4.1.1",
+    "joi": "^10.4.1"
   },
   "devDependencies": {
-    "code": "^1.5.0",
-    "lab": "^6.2.0",
-    "mongoose": "^4.3.7"
+    "code": "^4.0.0",
+    "lab": "^13.0.0",
+    "mongoose": "^4.9.5"
   }
 }
