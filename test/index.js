@@ -143,6 +143,38 @@ describe('Joigoose converter', function() {
         return done();
     });
 
+    it('should not convert a meta field when an ignore is passed in Joi meta object', function (done) {
+
+        const output = Joigoose.convert(O({
+            m_id: S().meta({ className: 'OtherLibraryInformation', joigooseIgnore: true })
+        }));
+
+        expect(output).to.exist();
+        expect(output.m_id).to.exist();
+        expect(output.m_id.className).not.to.exist();
+        expect(output.m_id.type).to.exist();
+        expect(output.m_id.type).to.equal(String);
+        expect(output.m_id.validate).to.exist();
+
+        return done();
+    });
+
+    it('should convert a meta field when an ignore is not passed in Joi meta object', function (done) {
+
+      const output = Joigoose.convert(O({
+          m_id: S().meta({ className: 'OtherLibraryInformation' })
+      }));
+
+      expect(output).to.exist();
+      expect(output.m_id).to.exist();
+      expect(output.m_id.className).to.exist();
+      expect(output.m_id.type).to.exist();
+      expect(output.m_id.type).to.equal(String);
+      expect(output.m_id.validate).to.exist();
+
+      return done();
+    });
+
     it('should convert a Joi object with an ObjectId and reference to a Mongoose schema', function (done) {
 
         const output = Joigoose.convert(O({
