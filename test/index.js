@@ -2,6 +2,7 @@
 
 const Joi = require('joi');
 const Mongoose = require('mongoose');
+Mongoose.Promise = global.Promise;
 
 // Joi shortcuts
 const S = Joi.string;
@@ -111,6 +112,21 @@ describe('Joigoose converter', function() {
         expect(output.name.validate).to.exist();
         expect(output.name.type).to.equal(String);
         expect(output.name.validate).to.exist();
+
+        return done();
+    });
+
+    it('should convert a Joi array with strings to a Mongoose schema', function (done) {
+
+        const output = Joigoose.convert(A().items({ foo: S() }));
+        expect(output).to.exist();
+        expect(output.type).to.exist();
+        expect(output.type).to.be.an.array();
+        expect(output.type.length).to.equal(1);
+        expect(output.type[0].foo).to.exist();
+        expect(output.type[0].foo).to.exist();
+        expect(output.type[0].foo.type).to.equal(String);
+        expect(output.type[0].foo.validate).to.exist();
 
         return done();
     });
@@ -590,7 +606,7 @@ describe('Joigoose integration tests', function () {
         newUser.validate(function (err) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('User2 validation failed');
+            expect(err.message).to.equal('User2 validation failed: email: Validator failed for path `email` with value `Im not an email address!`');
             return done();
         });
     });
@@ -788,7 +804,7 @@ describe('Joigoose integration tests', function () {
         newUser.validate(function (err) {
 
             expect(err).to.exist();
-            expect(err.message).to.equal('User6 validation failed');
+            expect(err.message).to.equal('User6 validation failed: name: Validator failed for path `name` with value `null`');
             return done();
         });
     });
