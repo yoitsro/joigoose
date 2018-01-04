@@ -46,7 +46,7 @@ var joiUserSchema = Joi.object({
 
 #### 3. Convert your Joi schema to a Mongoose-style schema
 ```javascript
-var mongooseUserSchema = Joigoose.convert(joiUserSchema);
+var mongooseUserSchema = new Mongoose.Schema(Joigoose.convert(joiUserSchema));
 ```
 
 #### 4. Create your model
