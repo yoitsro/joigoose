@@ -17,16 +17,28 @@ npm install joigoose
 
 ## Usage
 
-#### 1. Import Mongoose and Joi
+### 1. Import Mongoose and Joi
 We must pass Mongoose into Joigoose so it knows about ObjectIds and other Mongoose specific stuff:
 ```javascript
-var Mongoose = require('mongoose');
-var Joigoose = require('joigoose')(Mongoose);
+const Mongoose = require('mongoose');
+const Joigoose = require('joigoose')(Mongoose);
 ```
 
-#### 2. Write your Joi schema (see here about how to specify ObjectIds!)
+#### With Joi options which apply to all validators:
+```javascript
+const Mongoose = require('mongoose');
+const Joigoose = require('joigoose')(Mongoose, { convert: false });
+```
 
-##### Things to know!
+#### With subdocument options to all subdocuments:
+```javascript
+const Mongoose = require('mongoose');
+const Joigoose = require('joigoose')(Mongoose, null, { _id: false, timestamps: false });
+```
+
+### 2. Write your Joi schema (see here about how to specify ObjectIds!)
+
+#### Things to know!
 Mongoose specific options can be specified in the `meta` object (see below).
 
 Arrays with items of different types will end up with the Mongoose type `Mixed`.
@@ -40,20 +52,24 @@ var joiUserSchema = Joi.object({
     }),
     email: Joi.string().email().required(),
     bestFriend: Joi.string().meta({ type: 'ObjectId', ref: 'User' }),
-    metaInfo: Joi.any()
+    metaInfo: Joi.any(),
+    addresses: Joi.array().items({
+        line1: Joi.string().required(),
+        line2: Joi.string()
+    }).meta({ _id: false, timestamps: true })
 });
 ```
 
-#### 3. Convert your Joi schema to a Mongoose-style schema
+### 3. Convert your Joi schema to a Mongoose-style schema
 ```javascript
 var mongooseUserSchema = new Mongoose.Schema(Joigoose.convert(joiUserSchema));
 ```
 
-#### 4. Create your model
+### 4. Create your model
 ```javascript
 User = Mongoose.model('User', mongooseUserSchema);
 ```
-#### 5. Enjoy!
+### 5. Enjoy!
 ```javascript
 var aGoodUser = new User({
     name: {

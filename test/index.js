@@ -111,10 +111,10 @@ describe('Joigoose converter', () => {
     expect(output.type).to.exist();
     expect(output.type).to.be.an.array();
     expect(output.type.length).to.equal(1);
-    expect(output.type[0].foo).to.exist();
-    expect(output.type[0].foo).to.exist();
-    expect(output.type[0].foo.type).to.equal(String);
-    expect(output.type[0].foo.validate).to.exist();
+    expect(output.type[0]).to.be.instanceof(Mongoose.Schema);
+    expect(output.type[0].paths.foo).to.exist();
+    expect(output.type[0].paths.foo.instance).to.equal('String');
+    expect(output.type[0].paths.foo.options.validate).to.exist();
   });
 
   it('should convert a Joi object with a number to a Mongoose schema', () => {
@@ -170,8 +170,8 @@ describe('Joigoose converter', () => {
     expect(output.name.type).to.equal(String);
     expect(output.merchants).to.exist();
     expect(output.merchants.type[0]).to.exist();
-    expect(output.merchants.type[0]._id).to.exist();
-    expect(output.merchants.type[0]._id.type).to.equal(Mongoose.Schema.Types.ObjectId);
+    expect(output.merchants.type[0].paths._id).to.exist();
+    expect(output.merchants.type[0].paths._id.instance).to.equal('ObjectID');
   });
 
   it('should convert a Joi object with an array containing an ObjectId added after the initial object was set up to a Mongoose schema', () => {
@@ -196,8 +196,8 @@ describe('Joigoose converter', () => {
     expect(output.name.type).to.equal(String);
     expect(output.merchants).to.exist();
     expect(output.merchants.type[0]).to.exist();
-    expect(output.merchants.type[0]._id).to.exist();
-    expect(output.merchants.type[0]._id.type).to.equal(Mongoose.Schema.Types.ObjectId);
+    expect(output.merchants.type[0].paths._id).to.exist();
+    expect(output.merchants.type[0].paths._id.instance).to.equal('ObjectID');
   });
 
   it('should convert a Joi object with a Mixed type to a Mongoose schema', () => {
@@ -486,320 +486,380 @@ describe('Joigoose integration tests', () => {
   let Joigoose;
   let joiUserSchema;
 
-  before(() => {
+  describe('when joigoose is created with defaults', () => {
 
-    Joigoose = require('../lib')(Mongoose);
-    joiUserSchema = O({
-      name: O({
-        first: S().required(),
-        last: S().required()
-      }),
-      email: S().email().required()
-    });
-  });
+    before(() => {
 
-  it('should generate and validate a schema using a Joi object', () => {
-
-    const mongooseUserSchema = Joigoose.convert(joiUserSchema);
-    const User = Mongoose.model('User', mongooseUserSchema);
-
-    const newUser = new User({
-      name: {
-        first: 'Barry',
-        last: 'White'
-      },
-      email: 'barry@white.com'
+      Joigoose = require('../lib')(Mongoose);
+      joiUserSchema = O({
+        name: O({
+          first: S().required(),
+          last: S().required()
+        }),
+        email: S().email().required()
+      });
     });
 
-    newUser.validate(function (err) {
+    it('should generate and validate a schema using a Joi object', () => {
 
-      expect(err).to.not.exist();
-    });
-  });
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model('User', mongooseUserSchema);
 
-  it('should generate and unsuccessfully validate a schema using a Joi object', async () => {
+      const newUser = new User({
+        name: {
+          first: 'Barry',
+          last: 'White'
+        },
+        email: 'barry@white.com'
+      });
 
-    const mongooseUserSchema = Joigoose.convert(joiUserSchema);
-    const User = Mongoose.model('User2', mongooseUserSchema);
+      newUser.validate(function (err) {
 
-    const newUser = new User({
-      name: {
-        first: 'Barry',
-        last: 'White'
-      },
-      email: 'Im not an email address!'
-    });
-
-    try {
-      await newUser.validate();
-      fail('Should not be here');
-    } catch (err) {
-      expect(err).to.exist();
-      expect(err.message).to.equal('User2 validation failed: email: Validator failed for path `email` with value `Im not an email address!`');
-    }
-  });
-
-  it('should validate ObjectIds as strings', async () => {
-
-    const joiUserSchemaWithObjectId = O({
-      _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
-      name: O({
-        first: S().required(),
-        last: S().required()
-      }),
-      email: S().email().required()
+        expect(err).to.not.exist();
+      });
     });
 
-    const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
-    const User = Mongoose.model('User3', mongooseUserSchema);
+    it('should generate and unsuccessfully validate a schema using a Joi object', async () => {
 
-    const newUser = new User({
-      _id: 'abcdef012345abcdef012345',
-      name: {
-        first: 'Barry',
-        last: 'White'
-      },
-      email: 'barry@white.com'
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model('User2', mongooseUserSchema);
+
+      const newUser = new User({
+        name: {
+          first: 'Barry',
+          last: 'White'
+        },
+        email: 'Im not an email address!'
+      });
+
+      try {
+        await newUser.validate();
+        fail('Should not be here');
+      } catch (err) {
+        expect(err).to.exist();
+        expect(err.message).to.equal('User2 validation failed: email: Validator failed for path `email` with value `Im not an email address!`');
+      }
     });
 
-    await newUser.validate();
-  });
+    it('should validate ObjectIds as strings', async () => {
 
-  it('should validate ObjectIds as ObjectIds', async () => {
+      const joiUserSchemaWithObjectId = O({
+        _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
+        name: O({
+          first: S().required(),
+          last: S().required()
+        }),
+        email: S().email().required()
+      });
 
-    const joiUserSchemaWithObjectId = O({
-      _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
-      name: O({
-        first: S().required(),
-        last: S().required()
-      }),
-      email: S().email().required()
-    });
+      const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+      const User = Mongoose.model('User3', mongooseUserSchema);
 
-    const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
-    const User = Mongoose.model('User3b', mongooseUserSchema);
-
-    const newUser = new User({
-      _id: new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
-      name: {
-        first: 'Barry',
-        last: 'White'
-      },
-      email: 'barry@white.com'
-    });
-
-    await newUser.validate();
-    expect(newUser._id.toString()).to.equal('abcdef012345abcdef012345');
-  });
-
-  it('should validate nested ObjectIds as strings', async () => {
-
-    const hobbiesSchema = O({
-      _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
-      name: S().required()
-    });
-
-    const joiUserSchemaWithObjectId = O({
-      hobbies: A().items(hobbiesSchema),
-    });
-
-    const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
-    const User = Mongoose.model('UserHobbies', mongooseUserSchema);
-
-    const newUser = new User({
-      hobbies: [{
+      const newUser = new User({
         _id: 'abcdef012345abcdef012345',
-        name: 'cycling'
-      }, {
-        _id: 'abcdef012345abcdef01234a',
-        name: 'running'
-      }]
-    });
+        name: {
+          first: 'Barry',
+          last: 'White'
+        },
+        email: 'barry@white.com'
+      });
 
-    await newUser.validate();
-  });
-
-  it('should validate nested ObjectIds as actual ObjectId objects', async () => {
-
-    const hobbiesSchema = O({
-      _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
-      name: S().required()
-    });
-
-    const joiUserSchemaWithObjectId = O({
-      hobbies: A().items(hobbiesSchema),
-    });
-
-    const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
-    const User = Mongoose.model('UserHobbies2', mongooseUserSchema);
-
-    const newUser = new User({
-      hobbies: [{
-        _id: new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
-        name: 'cycling'
-      }, {
-        _id: new Mongoose.Types.ObjectId('abcdef012345abcdef01234a'),
-        name: 'running'
-      }]
-    });
-
-    await newUser.validate();
-  });
-
-  it('should validate ObjectIds in arrays', async () => {
-
-    const joiUserSchemaWithObjectId = O({
-      _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }),
-      hobbies: A().items(S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' })),
-    });
-
-    const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
-    const User = Mongoose.model('UserHobbies3', mongooseUserSchema);
-
-    const newUser = new User({
-      hobbies: [
-        new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
-        new Mongoose.Types.ObjectId('abcdef012345abcdef01234a')
-      ]
-    });
-
-    await newUser.validate();
-  });
-
-  it('should apply defaults when they\'re not specified', async () => {
-
-    const joiUserSchema = O({
-      name: O({
-        first: S().default('Barry'),
-        last: S().default('White')
-      }),
-      // registered: B().default(false),
-      age: N().default(21),
-      hobbies: A().default(['cycling'])
-    });
-
-    const mongooseUserSchema = Joigoose.convert(joiUserSchema);
-    const User = Mongoose.model('User5', mongooseUserSchema);
-
-    const newUser = new User();
-
-    expect(newUser.name.first).to.equal('Barry');
-    expect(newUser.name.last).to.equal('White');
-    // expect(newUser.registered).to.equal(false);
-    expect(newUser.age).to.equal(21);
-    expect(newUser.hobbies).to.equal(['cycling']);
-
-    await newUser.validate();
-  });
-
-  it('should make sure value exists in the wrapper', async () => {
-
-    const joiUserSchema = O({
-      name: S()
-    });
-
-    const mongooseUserSchema = Joigoose.convert(joiUserSchema);
-    const User = Mongoose.model('User6', mongooseUserSchema);
-
-    const newUser = new User({
-      name: null
-    });
-
-    try {
       await newUser.validate();
-    } catch (err) {
-      expect(err).to.exist();
-      expect(err.message).to.equal('User6 validation failed: name: Validator failed for path `name` with value `null`');
-    }
+    });
+
+    it('should validate ObjectIds as ObjectIds', async () => {
+
+      const joiUserSchemaWithObjectId = O({
+        _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }).required(),
+        name: O({
+          first: S().required(),
+          last: S().required()
+        }),
+        email: S().email().required()
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+      const User = Mongoose.model('User3b', mongooseUserSchema);
+
+      const newUser = new User({
+        _id: new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
+        name: {
+          first: 'Barry',
+          last: 'White'
+        },
+        email: 'barry@white.com'
+      });
+
+      await newUser.validate();
+      expect(newUser._id.toString()).to.equal('abcdef012345abcdef012345');
+    });
+
+    it('should validate nested ObjectIds as strings', async () => {
+
+      const hobbiesSchema = O({
+        _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
+        name: S().required()
+      });
+
+      const joiUserSchemaWithObjectId = O({
+        hobbies: A().items(hobbiesSchema),
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+      const User = Mongoose.model('UserHobbies', mongooseUserSchema);
+
+      const newUser = new User({
+        hobbies: [{
+          _id: 'abcdef012345abcdef012345',
+          name: 'cycling'
+        }, {
+          _id: 'abcdef012345abcdef01234a',
+          name: 'running'
+        }]
+      });
+
+      await newUser.validate();
+    });
+
+    it('should validate nested ObjectIds as actual ObjectId objects', async () => {
+
+      const hobbiesSchema = O({
+        _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' }).required(),
+        name: S().required()
+      });
+
+      const joiUserSchemaWithObjectId = O({
+        hobbies: A().items(hobbiesSchema),
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+      const User = Mongoose.model('UserHobbies2', mongooseUserSchema);
+
+      const newUser = new User({
+        hobbies: [{
+          _id: new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
+          name: 'cycling'
+        }, {
+          _id: new Mongoose.Types.ObjectId('abcdef012345abcdef01234a'),
+          name: 'running'
+        }]
+      });
+
+      await newUser.validate();
+    });
+
+    it('should validate ObjectIds in arrays', async () => {
+
+      const joiUserSchemaWithObjectId = O({
+        _id: S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId' }),
+        hobbies: A().items(S().regex(/^[0-9a-fA-F]{24}$/).meta({ type: 'ObjectId', ref: 'Hobby' })),
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
+      const User = Mongoose.model('UserHobbies3', mongooseUserSchema);
+
+      const newUser = new User({
+        hobbies: [
+          new Mongoose.Types.ObjectId('abcdef012345abcdef012345'),
+          new Mongoose.Types.ObjectId('abcdef012345abcdef01234a')
+        ]
+      });
+
+      await newUser.validate();
+    });
+
+    it('should apply defaults when they\'re not specified', async () => {
+
+      const joiUserSchema = O({
+        name: O({
+          first: S().default('Barry'),
+          last: S().default('White')
+        }),
+        // registered: B().default(false),
+        age: N().default(21),
+        hobbies: A().default(['cycling'])
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model('User5', mongooseUserSchema);
+
+      const newUser = new User();
+
+      expect(newUser.name.first).to.equal('Barry');
+      expect(newUser.name.last).to.equal('White');
+      // expect(newUser.registered).to.equal(false);
+      expect(newUser.age).to.equal(21);
+      expect(newUser.hobbies).to.equal(['cycling']);
+
+      await newUser.validate();
+    });
+
+    it('should make sure value exists in the wrapper', async () => {
+
+      const joiUserSchema = O({
+        name: S()
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model('User6', mongooseUserSchema);
+
+      const newUser = new User({
+        name: null
+      });
+
+      try {
+        await newUser.validate();
+      } catch (err) {
+        expect(err).to.exist();
+        expect(err.message).to.equal('User6 validation failed: name: Validator failed for path `name` with value `null`');
+      }
+    });
+
+    it('should deal with alternative validation properly', async () => {
+
+      const schema = O({
+        delivery_period: L([
+          O({
+            min: N().min(0).integer().empty([null, '']),
+            max: N().min(0).integer().empty([null, ''])
+          }).description('A range of days relative to now when this order will arrive.'),
+          N().integer().min(0).max(6).empty([null, '']).description('A absolute day of the week when this order will arrive.')
+        ])
+      });
+
+      const mongooseSchema = Joigoose.convert(schema);
+      const DeliveryMethod = Mongoose.model('DeliveryMethod', mongooseSchema);
+
+      const deliveryMethod = new DeliveryMethod({
+        delivery_period: {
+          min: 1,
+          max: 2
+        }
+      });
+
+      const deliveryMethod2 = new DeliveryMethod({
+        delivery_period: 5
+      });
+
+      const deliveryMethod3 = new DeliveryMethod({
+        delivery_period: 'lol'
+      });
+
+      await deliveryMethod.validate();
+      await deliveryMethod2.validate();
+
+      try {
+        await deliveryMethod3.validate();
+        fail('Should not be here');
+      } catch (err) {
+        expect(err).to.exist();
+        expect(err.message).to.not.equal('Should not be here');
+      }
+    });
+
+    it('should deal with alternative validation properly where the alternatives are two different objects', async () => {
+
+      const schema = O({
+        delivery_period: L([
+          O({
+            min: N().min(0).integer().empty([null, '']),
+            max: N().min(0).integer().empty([null, ''])
+          }).description('A range of days relative to now when this order will arrive.'),
+          O({
+            lower: N().min(0).integer().empty([null, '']),
+            upper: N().min(0).integer().empty([null, ''])
+          }).description('A range of days relative to now when this order will arrive.'),
+        ])
+      });
+
+      const mongooseSchema = Joigoose.convert(schema);
+      const DeliveryMethod = Mongoose.model('DeliveryMethod2', mongooseSchema);
+
+      const deliveryMethod = new DeliveryMethod({
+        delivery_period: {
+          min: 1,
+          max: 2
+        }
+      });
+
+      const deliveryMethod2 = new DeliveryMethod({
+        delivery_period: {
+          lower: 10,
+          upper: 20
+        }
+      });
+
+      const deliveryMethod3 = new DeliveryMethod({
+        delivery_period: 'lol'
+      });
+
+      await deliveryMethod.validate();
+      await deliveryMethod2.validate();
+
+      try {
+        await deliveryMethod3.validate();
+        fail('Should not be here');
+      } catch (err) {
+        expect(err).to.exist();
+        expect(err.message).to.not.equal('Should not be here');
+      }
+    });
   });
 
-  it('should deal with alternative validation properly', async () => {
+  describe('when joigoose is created with mongoose options', () => {
 
-    const schema = O({
-      delivery_period: L([
-        O({
-          min: N().min(0).integer().empty([null, '']),
-          max: N().min(0).integer().empty([null, ''])
-        }).description('A range of days relative to now when this order will arrive.'),
-        N().integer().min(0).max(6).empty([null, '']).description('A absolute day of the week when this order will arrive.')
-      ])
+    before(() => {
+
+      Joigoose = require('../lib')(Mongoose, null, { _id: false });
+      joiUserSchema = O({
+        favourite_colours: A().items({ name: S(), hex: S() }),
+        addresses: A().items({ line1: S(), line2: S() }).meta({ _id: true })
+      });
     });
 
-    const mongooseSchema = Joigoose.convert(schema);
-    const DeliveryMethod = Mongoose.model('DeliveryMethod', mongooseSchema);
+    it('should generate and validate a schema using a Joi object using global subdocument options', async () => {
 
-    const deliveryMethod = new DeliveryMethod({
-      delivery_period: {
-        min: 1,
-        max: 2
-      }
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model('UserWithColours', mongooseUserSchema);
+
+      const newUser = new User({
+        favourite_colours: [
+          {
+            name: 'red',
+            hex: 'ff0000'
+          },
+          {
+            name: 'green',
+            hex: '00ff00'
+          }
+        ]
+      });
+
+      await newUser.validate();
+      expect(newUser.favourite_colours[0]._id).to.not.exist();
     });
 
-    const deliveryMethod2 = new DeliveryMethod({
-      delivery_period: 5
+    it('should generate and validate a schema using a Joi object with global subdocument options overidden', async () => {
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model('UserWithAddress', mongooseUserSchema);
+
+      const newUser = new User({
+        addresses: [
+          {
+            line1: 'line1',
+            line2: 'line2'
+          },
+          {
+            line1: 'street',
+            line2: 'apartment'
+          }
+        ]
+      });
+
+      await newUser.validate();
+
+      expect(newUser.addresses[0]._id).to.exist();
     });
-
-    const deliveryMethod3 = new DeliveryMethod({
-      delivery_period: 'lol'
-    });
-
-    await deliveryMethod.validate();
-    await deliveryMethod2.validate();
-
-    try {
-      await deliveryMethod3.validate();
-      fail('Should not be here');
-    } catch (err) {
-      expect(err).to.exist();
-      expect(err.message).to.not.equal('Should not be here');
-    }
-  });
-
-  it('should deal with alternative validation properly where the alternatives are two different objects', async () => {
-
-    const schema = O({
-      delivery_period: L([
-        O({
-          min: N().min(0).integer().empty([null, '']),
-          max: N().min(0).integer().empty([null, ''])
-        }).description('A range of days relative to now when this order will arrive.'),
-        O({
-          lower: N().min(0).integer().empty([null, '']),
-          upper: N().min(0).integer().empty([null, ''])
-        }).description('A range of days relative to now when this order will arrive.'),
-      ])
-    });
-
-    const mongooseSchema = Joigoose.convert(schema);
-    const DeliveryMethod = Mongoose.model('DeliveryMethod2', mongooseSchema);
-
-    const deliveryMethod = new DeliveryMethod({
-      delivery_period: {
-        min: 1,
-        max: 2
-      }
-    });
-
-    const deliveryMethod2 = new DeliveryMethod({
-      delivery_period: {
-        lower: 10,
-        upper: 20
-      }
-    });
-
-    const deliveryMethod3 = new DeliveryMethod({
-      delivery_period: 'lol'
-    });
-
-    await deliveryMethod.validate();
-    await deliveryMethod2.validate();
-
-    try {
-      await deliveryMethod3.validate();
-      fail('Should not be here');
-    } catch (err) {
-      expect(err).to.exist();
-      expect(err.message).to.not.equal('Should not be here');
-    }
   });
 });
