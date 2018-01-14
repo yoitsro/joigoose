@@ -477,7 +477,7 @@ describe('Joigoose mongoose validation wrapper', () => {
   it('returns validated input for a successful validation', async () => {
 
     const result = await Joigoose.mongooseValidateWrapper(S(), 'defsisastringyo');
-    expect(result).to.equal('defsisastringyo');
+    expect(result).to.equal(true);
   });
 });
 
@@ -496,11 +496,12 @@ describe('Joigoose integration tests', () => {
           first: S().required(),
           last: S().required()
         }),
-        email: S().email().required()
+        email: S().email().required(),
+        verified: B()
       });
     });
 
-    it('should generate and validate a schema using a Joi object', () => {
+    it('should generate and validate a schema using a Joi object', async () => {
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model('User', mongooseUserSchema);
@@ -510,13 +511,11 @@ describe('Joigoose integration tests', () => {
           first: 'Barry',
           last: 'White'
         },
-        email: 'barry@white.com'
+        email: 'barry@white.com',
+        verified: false
       });
 
-      newUser.validate(function (err) {
-
-        expect(err).to.not.exist();
-      });
+      await newUser.validate();
     });
 
     it('should generate and unsuccessfully validate a schema using a Joi object', async () => {

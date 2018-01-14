@@ -1,6 +1,6 @@
 {
   "name": "joigoose",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "description": "Joi validation for your Mongoose models without the hassle of maintaining two schemas",
   "main": "lib/index.js",
   "scripts": {
@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "hoek": "^5.0.2",
-    "joi": "^13.0.2"
+    "joi": "^13.1.0"
   },
   "devDependencies": {
     "code": "^5.1.2",
