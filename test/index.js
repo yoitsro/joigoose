@@ -104,7 +104,7 @@ describe('Joigoose converter', () => {
     expect(output.name.validate).to.exist();
   });
 
-  it('should convert a Joi array with strings to a Mongoose schema', () => {
+  it('should convert a Joi array with object of strings to a Mongoose schema', () => {
 
     const output = Joigoose.convert(A().items({ foo: S() }));
     expect(output).to.exist();
@@ -115,6 +115,46 @@ describe('Joigoose converter', () => {
     expect(output.type[0].paths.foo).to.exist();
     expect(output.type[0].paths.foo.instance).to.equal('String');
     expect(output.type[0].paths.foo.options.validate).to.exist();
+  });
+
+  it('should convert a Joi array with strings to a Mongoose schema', () => {
+
+    const output = Joigoose.convert(A().items(S()));
+    expect(output).to.exist();
+    expect(output.type).to.exist();
+    expect(output.type).to.be.an.array();
+    expect(output.type.length).to.equal(1);
+    expect(output.type[0].type).to.equal(String);
+  });
+
+  it('should convert a Joi array with numbers to a Mongoose schema', () => {
+
+    const output = Joigoose.convert(A().items(N()));
+    expect(output).to.exist();
+    expect(output.type).to.exist();
+    expect(output.type).to.be.an.array();
+    expect(output.type.length).to.equal(1);
+    expect(output.type[0].type).to.equal(Number);
+  });
+
+  it('should convert a Joi array with dates to a Mongoose schema', () => {
+
+    const output = Joigoose.convert(A().items(D()));
+    expect(output).to.exist();
+    expect(output.type).to.exist();
+    expect(output.type).to.be.an.array();
+    expect(output.type.length).to.equal(1);
+    expect(output.type[0].type).to.equal(Date);
+  });
+
+  it('should convert a Joi array with booleans to a Mongoose schema', () => {
+
+    const output = Joigoose.convert(A().items(B()));
+    expect(output).to.exist();
+    expect(output.type).to.exist();
+    expect(output.type).to.be.an.array();
+    expect(output.type.length).to.equal(1);
+    expect(output.type[0].type).to.equal(Boolean);
   });
 
   it('should convert a Joi object with a number to a Mongoose schema', () => {
