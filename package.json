@@ -33,15 +33,15 @@
     }
   },
   "dependencies": {
-    "hoek": "^5.0.2",
-    "joi": "^13.1.0"
+    "hoek": "^5.0.3",
+    "joi": "^13.4.0"
   },
   "devDependencies": {
     "code": "^5.1.2",
     "cz-conventional-changelog": "^2.1.0",
     "eslint": "^4.12.1",
     "eslint-plugin-node": "^5.2.1",
-    "lab": "^15.1.2",
+    "lab": "^15.5.0",
     "mongoose": "^4.13.6"
   }
 }
