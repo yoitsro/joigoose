@@ -1,30 +1,7 @@
 {
-  "plugins": ["node"],
+  "plugins": ["node", "prettier"],
   "extends": ["eslint:recommended", "plugin:node/recommended"],
   "rules": {
-    "indent": [
-      "error",
-      2
-    ],
-    "linebreak-style": [
-      "error",
-      "unix"
-    ],
-    "quotes": [
-      "error",
-      "single"
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "keyword-spacing": [
-      "error"
-    ],
-    "prefer-const": [
-      "error"
-    ],
-    "eol-last": "error",
-    "node/exports-style": ["error", "module.exports"]
+    "prettier/prettier": "error"
   }
 }
