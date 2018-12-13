@@ -4,7 +4,7 @@
   "description": "Joi validation for your Mongoose models without the hassle of maintaining two schemas",
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab test -c"
+    "test": "lab test -c -I queueMicrotask"
   },
   "repository": {
     "type": "git",
