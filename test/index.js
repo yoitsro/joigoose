@@ -43,8 +43,6 @@ describe("Joigoose initializer", () => {
       fail("Should not be here");
     } catch (err) {
       expect(err.message).to.not.equal("Should not be here");
-      expect(err).to.exist();
-      expect(err.errors.favouriteHex).to.exist();
       expect(err.errors.favouriteHex.message).to.equal(
         "Validator failed for path `favouriteHex` with value `ABCDEF`"
       );
@@ -73,8 +71,6 @@ describe("Joigoose converter", () => {
 
   it("should convert a string object", () => {
     const output = Joigoose.convert(S());
-    expect(output).to.exist();
-    expect(output.type).to.exist();
     expect(output.type).to.equal(String);
     expect(output.validate).to.exist();
   });
@@ -82,7 +78,6 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object to a Mongoose schema", () => {
     const output = Joigoose.convert(O());
 
-    expect(output).to.exist();
     expect(output.type).to.equal(Mongoose.Schema.Types.Mixed);
   });
 
@@ -99,20 +94,15 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi array with object of strings to a Mongoose schema", () => {
     const output = Joigoose.convert(A().items({ foo: S() }));
-    expect(output).to.exist();
-    expect(output.type).to.exist();
     expect(output.type).to.be.an.array();
     expect(output.type.length).to.equal(1);
     expect(output.type[0]).to.be.instanceof(Mongoose.Schema);
-    expect(output.type[0].paths.foo).to.exist();
     expect(output.type[0].paths.foo.instance).to.equal("String");
     expect(output.type[0].paths.foo.options.validate).to.exist();
   });
 
   it("should convert a Joi array with strings to a Mongoose schema", () => {
     const output = Joigoose.convert(A().items(S()));
-    expect(output).to.exist();
-    expect(output.type).to.exist();
     expect(output.type).to.be.an.array();
     expect(output.type.length).to.equal(1);
     expect(output.type[0].type).to.equal(String);
@@ -120,8 +110,6 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi array with numbers to a Mongoose schema", () => {
     const output = Joigoose.convert(A().items(N()));
-    expect(output).to.exist();
-    expect(output.type).to.exist();
     expect(output.type).to.be.an.array();
     expect(output.type.length).to.equal(1);
     expect(output.type[0].type).to.equal(Number);
@@ -129,8 +117,6 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi array with dates to a Mongoose schema", () => {
     const output = Joigoose.convert(A().items(D()));
-    expect(output).to.exist();
-    expect(output.type).to.exist();
     expect(output.type).to.be.an.array();
     expect(output.type.length).to.equal(1);
     expect(output.type[0].type).to.equal(Date);
@@ -138,8 +124,6 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi array with booleans to a Mongoose schema", () => {
     const output = Joigoose.convert(A().items(B()));
-    expect(output).to.exist();
-    expect(output.type).to.exist();
     expect(output.type).to.be.an.array();
     expect(output.type.length).to.equal(1);
     expect(output.type[0].type).to.equal(Boolean);
@@ -147,22 +131,12 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi object with a number to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ age: N() }));
-
-    expect(output).to.exist();
-    expect(output.age).to.exist();
-    expect(output.age.type).to.exist();
-    expect(output.age.validate).to.exist();
     expect(output.age.type).to.equal(Number);
     expect(output.age.validate).to.exist();
   });
 
   it("should convert a Joi object with a date to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ birthday: D() }));
-
-    expect(output).to.exist();
-    expect(output.birthday).to.exist();
-    expect(output.birthday.type).to.exist();
-    expect(output.birthday.validate).to.exist();
     expect(output.birthday.type).to.equal(Date);
     expect(output.birthday.validate).to.exist();
   });
@@ -176,9 +150,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.m_id).to.exist();
-    expect(output.m_id.type).to.exist();
     expect(output.m_id.type).to.equal(Mongoose.Schema.Types.ObjectId);
     expect(output.m_id.ref).to.equal("Merchant");
     expect(output.m_id.validate).to.exist();
@@ -199,12 +170,7 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
-    expect(output.merchants).to.exist();
-    expect(output.merchants.type[0]).to.exist();
-    expect(output.merchants.type[0].paths._id).to.exist();
     expect(output.merchants.type[0].paths._id.instance).to.equal("ObjectID");
   });
 
@@ -226,12 +192,7 @@ describe("Joigoose converter", () => {
 
     const output = Joigoose.convert(updatedSchema);
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
-    expect(output.merchants).to.exist();
-    expect(output.merchants.type[0]).to.exist();
-    expect(output.merchants.type[0].paths._id).to.exist();
     expect(output.merchants.type[0].paths._id.instance).to.equal("ObjectID");
   });
 
@@ -242,9 +203,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.other_info).to.exist();
-    expect(output.other_info.type).to.exist();
     expect(output.other_info.type).to.equal(Mongoose.Schema.Types.Mixed);
     expect(output.other_info.validate).to.exist();
   });
@@ -256,7 +214,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
     expect(output.enabled.type).to.equal(Boolean);
     expect(output.enabled.validate).to.exist();
   });
@@ -264,9 +221,6 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with an array of undefined types to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ hobbies: A() }));
 
-    expect(output).to.exist();
-    expect(output.hobbies).to.exist();
-    expect(output.hobbies.type).to.exist();
     expect(output.hobbies.type).to.equal([]);
     expect(output.hobbies.type.validate).to.not.exist();
   });
@@ -274,10 +228,6 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with an array of strings to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ hobbies: A().items(S()) }));
 
-    expect(output).to.exist();
-    expect(output.hobbies).to.exist();
-    expect(output.hobbies.type).to.exist();
-    expect(output.hobbies.type[0]).to.exist();
     expect(output.hobbies.type[0].type).to.equal(String);
     expect(output.hobbies.type[0].validate).to.exist();
   });
@@ -287,18 +237,11 @@ describe("Joigoose converter", () => {
       O({ hobbies: A().items(S().length(10), S().valid("yo!")) })
     );
 
-    expect(output).to.exist();
-    expect(output.hobbies).to.exist();
-    expect(output.hobbies.type).to.exist();
-    expect(output.hobbies.type[0]).to.exist();
     expect(output.hobbies.type[0]).to.equal(String);
   });
 
   it("should convert a Joi object with alternatives of zero types to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ favouriteNumber: L() }));
-    expect(output).to.exist();
-    expect(output.favouriteNumber).to.exist();
-    expect(output.favouriteNumber.type).to.exist();
     expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
   });
 
@@ -307,16 +250,12 @@ describe("Joigoose converter", () => {
       O({ contactDetail: L([S().regex(/\+\d/i), S().email()]) })
     );
 
-    expect(output).to.exist();
-    expect(output.contactDetail).to.exist();
     expect(output.contactDetail.type).to.equal(String);
   });
 
   it("should convert a Joi object with alternatives containing one type with one scema to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ contactDetail: L([S().email()]) }));
 
-    expect(output).to.exist();
-    expect(output.contactDetail).to.exist();
     expect(output.contactDetail.type).to.equal(String);
   });
 
@@ -325,8 +264,6 @@ describe("Joigoose converter", () => {
       O({ favouriteNumber: L([S(), N().integer()]) })
     );
 
-    expect(output).to.exist();
-    expect(output.favouriteNumber).to.exist();
     expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
   });
 
@@ -339,10 +276,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.hobbies).to.exist();
-    expect(output.hobbies.type).to.exist();
-    expect(output.hobbies.type[0]).to.exist();
     expect(output.hobbies.type[0]).to.equal(Mongoose.Schema.Types.Mixed);
     expect(output.hobbies.validate).to.not.exist();
   });
@@ -355,11 +288,7 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.age).to.exist();
-    expect(output.age.type).to.exist();
     expect(output.age.type).to.equal(Number);
-    expect(output.name.type).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.age.validate).to.exist();
   });
@@ -374,12 +303,8 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
-    expect(output.name.first).to.exist();
     expect(output.name.first.type).to.equal(String);
     expect(output.name.first.validate).to.exist();
-    expect(output.name.last).to.exist();
     expect(output.name.last.type).to.equal(String);
     expect(output.name.last.validate).to.exist();
   });
@@ -394,8 +319,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.required).to.not.exist();
   });
 
@@ -406,8 +329,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.name.required).to.equal(true);
     expect(output.name.validate).to.exist();
@@ -432,8 +353,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.name.index).to.equal(true);
     expect(output.name.validate).to.exist();
@@ -448,8 +367,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.name.index).to.equal(true);
     expect(output.name.bud).to.equal(true);
@@ -465,8 +382,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.name.index).to.equal(true);
     expect(output.name.validate).to.exist();
@@ -479,8 +394,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.name.validate).to.exist();
   });
@@ -507,8 +420,6 @@ describe("Joigoose converter", () => {
       })
     );
 
-    expect(output).to.exist();
-    expect(output.name).to.exist();
     expect(output.name.type).to.equal(String);
     expect(output.name.index).to.equal(true);
     expect(output.name.validate).to.exist();
@@ -590,7 +501,6 @@ describe("Joigoose integration tests", () => {
         await newUser.validate();
         fail("Should not be here");
       } catch (err) {
-        expect(err).to.exist();
         expect(err.message).to.equal(
           "User2 validation failed: email: Validator failed for path `email` with value `Im not an email address!`"
         );
@@ -787,7 +697,6 @@ describe("Joigoose integration tests", () => {
       try {
         await newUser.validate();
       } catch (err) {
-        expect(err).to.exist();
         expect(err.message).to.equal(
           "User6 validation failed: name: Validator failed for path `name` with value `null`"
         );
@@ -845,7 +754,6 @@ describe("Joigoose integration tests", () => {
         await deliveryMethod3.validate();
         fail("Should not be here");
       } catch (err) {
-        expect(err).to.exist();
         expect(err.message).to.not.equal("Should not be here");
       }
     });
@@ -908,7 +816,6 @@ describe("Joigoose integration tests", () => {
         await deliveryMethod3.validate();
         fail("Should not be here");
       } catch (err) {
-        expect(err).to.exist();
         expect(err.message).to.not.equal("Should not be here");
       }
     });
