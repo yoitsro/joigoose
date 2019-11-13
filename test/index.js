@@ -247,21 +247,21 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi object with alternatives of the same type to a Mongoose schema", () => {
     const output = Joigoose.convert(
-      O({ contactDetail: L([S().regex(/\+\d/i), S().email()]) })
+      O({ contactDetail: L(S().regex(/\+\d/i), S().email()) })
     );
 
     expect(output.contactDetail.type).to.equal(String);
   });
 
   it("should convert a Joi object with alternatives containing one type with one scema to a Mongoose schema", () => {
-    const output = Joigoose.convert(O({ contactDetail: L([S().email()]) }));
+    const output = Joigoose.convert(O({ contactDetail: L(S().email()) }));
 
     expect(output.contactDetail.type).to.equal(String);
   });
 
   it("should convert a Joi object with alternatives of different types to a Mongoose schema", () => {
     const output = Joigoose.convert(
-      O({ favouriteNumber: L([S(), N().integer()]) })
+      O({ favouriteNumber: L(S(), N().integer()) })
     );
 
     expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
@@ -705,7 +705,7 @@ describe("Joigoose integration tests", () => {
 
     it("should deal with alternative validation properly", async () => {
       const schema = O({
-        delivery_period: L([
+        delivery_period: L(
           O({
             min: N()
               .min(0)
@@ -726,7 +726,7 @@ describe("Joigoose integration tests", () => {
             .description(
               "A absolute day of the week when this order will arrive."
             )
-        ])
+        )
       });
 
       const mongooseSchema = Joigoose.convert(schema);
@@ -760,7 +760,7 @@ describe("Joigoose integration tests", () => {
 
     it("should deal with alternative validation properly where the alternatives are two different objects", async () => {
       const schema = O({
-        delivery_period: L([
+        delivery_period: L(
           O({
             min: N()
               .min(0)
@@ -785,7 +785,7 @@ describe("Joigoose integration tests", () => {
           }).description(
             "A range of days relative to now when this order will arrive."
           )
-        ])
+        )
       });
 
       const mongooseSchema = Joigoose.convert(schema);
