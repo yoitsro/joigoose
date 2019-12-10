@@ -518,6 +518,45 @@ describe("Joigoose integration tests", () => {
       await fixture.validate();
     });
 
+    it("should generate and unsuccessfully validate a schema using a async/sync Joi.any().external(method, [description])", async () => {
+      const check = async id => {
+        await Hoek.wait();
+        if (id === "valid") {
+          return "verified";
+        }
+        if (id === "skip") {
+          return;
+        }
+        throw new Error("Invalid id");
+      };
+
+      const append = id => {
+        return id + "!";
+      };
+
+      const schema = O({
+        id: S()
+          .external(check)
+          .external(append)
+      });
+
+      const mongooseSchema = Joigoose.convert(schema);
+      const Schema = Mongoose.model("Schema2", mongooseSchema);
+
+      const fixture = new Schema({
+        id: "invalid"
+      });
+
+      try {
+        await fixture.validate();
+        fail("Should not be here");
+      } catch (err) {
+        expect(err.message).to.equal(
+          "Schema2 validation failed: id: Validator failed for path `id` with value `invalid`"
+        );
+      }
+    });
+
     it("should generate and unsuccessfully validate a schema using a Joi object", async () => {
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("User2", mongooseUserSchema);
