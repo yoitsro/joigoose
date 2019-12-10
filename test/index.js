@@ -1,5 +1,6 @@
 "use strict";
 
+const Hoek = require("@hapi/hoek");
 const Joi = require("@hapi/joi");
 const Mongoose = require("mongoose");
 Mongoose.Promise = global.Promise;
@@ -483,6 +484,38 @@ describe("Joigoose integration tests", () => {
       });
 
       await newUser.validate();
+    });
+
+    it("should generate and validate a schema using a async/sync Joi.any().external(method, [description])", async () => {
+      const check = async id => {
+        await Hoek.wait();
+        if (id === "valid") {
+          return "verified";
+        }
+        if (id === "skip") {
+          return;
+        }
+        throw new Error("Invalid id");
+      };
+
+      const append = id => {
+        return id + "!";
+      };
+
+      const schema = O({
+        id: S()
+          .external(check)
+          .external(append)
+      });
+
+      const mongooseSchema = Joigoose.convert(schema);
+      const Schema = Mongoose.model("Schema", mongooseSchema);
+
+      const fixture = new Schema({
+        id: "valid"
+      });
+
+      await fixture.validate();
     });
 
     it("should generate and unsuccessfully validate a schema using a Joi object", async () => {
