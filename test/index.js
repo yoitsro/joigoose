@@ -609,6 +609,26 @@ describe("Joigoose integration tests", () => {
       await newUser.validate();
     });
 
+    it("should validate type String", async () => {
+      const joiUserSchemaWithString = O({
+        name: O({
+          first: S().required().meta({ _mongoose: { type: "String" }}),
+        }),
+      });
+
+      const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithString);
+      const User = Mongoose.model("UserWithString", mongooseUserSchema);
+
+      const newUser = new User({
+        name: {
+          first: "Barry",
+        },
+      });
+
+      await newUser.validate();
+      expect(newUser.name.first).to.equal("Barry");
+    });
+
     it("should validate ObjectIds as ObjectIds", async () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
