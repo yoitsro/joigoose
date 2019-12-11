@@ -41,6 +41,7 @@
   "devDependencies": {
     "@hapi/code": "^7.0.0",
     "@hapi/lab": "^21.0.0",
+    "@semantic-release/changelog": "^3.0.6",
     "@semantic-release/git": "^7.0.18",
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.7.2",
@@ -54,6 +55,7 @@
     "plugins": [
       "@semantic-release/commit-analyzer",
       "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
       "@semantic-release/npm",
       "@semantic-release/git",
       "@semantic-release/github"
