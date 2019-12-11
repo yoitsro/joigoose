@@ -4,7 +4,9 @@
   "description": "Joi validation for your Mongoose models without the hassle of maintaining two schemas",
   "main": "lib/index.js",
   "scripts": {
-    "test": "lab test -c -I queueMicrotask"
+    "test": "lab test -c -I queueMicrotask",
+    "release": "standard-version",
+    "semantic-release": "semantic-release"
   },
   "repository": {
     "type": "git",
@@ -37,13 +39,14 @@
     "@hapi/joi": "^16.1.7"
   },
   "devDependencies": {
-    "@hapi/lab": "^21.0.0",
     "@hapi/code": "^7.0.0",
-    "cz-conventional-changelog": "^2.1.0",
+    "@hapi/lab": "^21.0.0",
+    "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.7.2",
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-prettier": "^3.0.0",
     "mongoose": "^5.8.0",
-    "prettier": "^1.15.3"
+    "prettier": "^1.15.3",
+    "semantic-release": "^15.13.31"
   }
 }
