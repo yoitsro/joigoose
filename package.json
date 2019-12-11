@@ -41,6 +41,7 @@
   "devDependencies": {
     "@hapi/code": "^7.0.0",
     "@hapi/lab": "^21.0.0",
+    "@semantic-release/git": "^7.0.18",
     "cz-conventional-changelog": "^3.0.2",
     "eslint": "^6.7.2",
     "eslint-plugin-node": "^10.0.0",
@@ -48,5 +49,14 @@
     "mongoose": "^5.8.0",
     "prettier": "^1.15.3",
     "semantic-release": "^15.13.31"
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ]
   }
 }
