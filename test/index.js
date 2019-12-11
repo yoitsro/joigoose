@@ -1,5 +1,6 @@
 "use strict";
 
+const Hoek = require("@hapi/hoek");
 const Joi = require("@hapi/joi");
 const Mongoose = require("mongoose");
 Mongoose.Promise = global.Promise;
@@ -247,21 +248,21 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi object with alternatives of the same type to a Mongoose schema", () => {
     const output = Joigoose.convert(
-      O({ contactDetail: L([S().regex(/\+\d/i), S().email()]) })
+      O({ contactDetail: L(S().regex(/\+\d/i), S().email()) })
     );
 
     expect(output.contactDetail.type).to.equal(String);
   });
 
   it("should convert a Joi object with alternatives containing one type with one scema to a Mongoose schema", () => {
-    const output = Joigoose.convert(O({ contactDetail: L([S().email()]) }));
+    const output = Joigoose.convert(O({ contactDetail: L(S().email()) }));
 
     expect(output.contactDetail.type).to.equal(String);
   });
 
   it("should convert a Joi object with alternatives of different types to a Mongoose schema", () => {
     const output = Joigoose.convert(
-      O({ favouriteNumber: L([S(), N().integer()]) })
+      O({ favouriteNumber: L(S(), N().integer()) })
     );
 
     expect(output.favouriteNumber.type).to.equal(Mongoose.Schema.Types.Mixed);
@@ -485,6 +486,77 @@ describe("Joigoose integration tests", () => {
       await newUser.validate();
     });
 
+    it("should generate and validate a schema using a async/sync Joi.any().external(method, [description])", async () => {
+      const check = async id => {
+        await Hoek.wait();
+        if (id === "valid") {
+          return "verified";
+        }
+        if (id === "skip") {
+          return;
+        }
+        throw new Error("Invalid id");
+      };
+
+      const append = id => {
+        return id + "!";
+      };
+
+      const schema = O({
+        id: S()
+          .external(check)
+          .external(append)
+      });
+
+      const mongooseSchema = Joigoose.convert(schema);
+      const Schema = Mongoose.model("Schema", mongooseSchema);
+
+      const fixture = new Schema({
+        id: "valid"
+      });
+
+      await fixture.validate();
+    });
+
+    it("should generate and unsuccessfully validate a schema using a async/sync Joi.any().external(method, [description])", async () => {
+      const check = async id => {
+        await Hoek.wait();
+        if (id === "valid") {
+          return "verified";
+        }
+        if (id === "skip") {
+          return;
+        }
+        throw new Error("Invalid id");
+      };
+
+      const append = id => {
+        return id + "!";
+      };
+
+      const schema = O({
+        id: S()
+          .external(check)
+          .external(append)
+      });
+
+      const mongooseSchema = Joigoose.convert(schema);
+      const Schema = Mongoose.model("Schema2", mongooseSchema);
+
+      const fixture = new Schema({
+        id: "invalid"
+      });
+
+      try {
+        await fixture.validate();
+        fail("Should not be here");
+      } catch (err) {
+        expect(err.message).to.equal(
+          "Schema2 validation failed: id: Validator failed for path `id` with value `invalid`"
+        );
+      }
+    });
+
     it("should generate and unsuccessfully validate a schema using a Joi object", async () => {
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("User2", mongooseUserSchema);
@@ -705,7 +777,7 @@ describe("Joigoose integration tests", () => {
 
     it("should deal with alternative validation properly", async () => {
       const schema = O({
-        delivery_period: L([
+        delivery_period: L(
           O({
             min: N()
               .min(0)
@@ -726,7 +798,7 @@ describe("Joigoose integration tests", () => {
             .description(
               "A absolute day of the week when this order will arrive."
             )
-        ])
+        )
       });
 
       const mongooseSchema = Joigoose.convert(schema);
@@ -760,7 +832,7 @@ describe("Joigoose integration tests", () => {
 
     it("should deal with alternative validation properly where the alternatives are two different objects", async () => {
       const schema = O({
-        delivery_period: L([
+        delivery_period: L(
           O({
             min: N()
               .min(0)
@@ -785,7 +857,7 @@ describe("Joigoose integration tests", () => {
           }).description(
             "A range of days relative to now when this order will arrive."
           )
-        ])
+        )
       });
 
       const mongooseSchema = Joigoose.convert(schema);
