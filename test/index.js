@@ -17,8 +17,8 @@ const Y = Joi.binary.bind(Joi);
 const Any = Joi.any.bind(Joi);
 
 // Test shortcuts
-const Code = require("code");
-const Lab = require("lab");
+const Code = require("@hapi/code");
+const Lab = require("@hapi/lab");
 const lab = (module.exports.lab = Lab.script());
 
 const { describe, it, before } = lab;
