@@ -35,7 +35,7 @@
     }
   },
   "dependencies": {
-    "@hapi/hoek": "^6.2.1",
+    "@hapi/hoek": "^8.5.0",
     "@hapi/joi": "^16.1.7"
   },
   "devDependencies": {
