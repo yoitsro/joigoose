@@ -21,4 +21,4 @@ jobs:
           - npx semantic-release
 
 cache:
-  directories: node_modules
+  npm: false
