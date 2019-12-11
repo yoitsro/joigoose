@@ -147,7 +147,7 @@ describe("Joigoose converter", () => {
       O({
         m_id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" }})
+          .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } })
       })
     );
 
@@ -164,7 +164,7 @@ describe("Joigoose converter", () => {
           O({
             _id: S()
               .regex(/^[0-9a-fA-F]{24}$/)
-              .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" }}),
+              .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } }),
             name: S()
           })
         )
@@ -185,7 +185,7 @@ describe("Joigoose converter", () => {
         O({
           _id: S()
             .regex(/^[0-9a-fA-F]{24}$/)
-            .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" }}),
+            .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } }),
           name: S()
         })
       )
@@ -350,7 +350,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with metadata to a Mongoose schema including the metadata", () => {
     const output = Joigoose.convert(
       O({
-        name: S().meta({ _mongoose: { index: true }})
+        name: S().meta({ _mongoose: { index: true } })
       })
     );
 
@@ -363,8 +363,8 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         name: S()
-          .meta({ _mongoose: { index: true }})
-          .meta({ _mongoose: { bud: true }})
+          .meta({ _mongoose: { index: true } })
+          .meta({ _mongoose: { bud: true } })
       })
     );
 
@@ -378,7 +378,7 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         name: S()
-          .meta({ _mongoose: { index: true }})
+          .meta({ _mongoose: { index: true } })
           .meta("no no no")
       })
     );
@@ -416,7 +416,7 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         name: S()
-          .meta({ _mongoose: { index: true }})
+          .meta({ _mongoose: { index: true } })
           .meta("no no no")
       })
     );
@@ -583,7 +583,7 @@ describe("Joigoose integration tests", () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId" }})
+          .meta({ _mongoose: { type: "ObjectId" } })
           .required(),
         name: O({
           first: S().required(),
@@ -612,8 +612,10 @@ describe("Joigoose integration tests", () => {
     it("should validate type String", async () => {
       const joiUserSchemaWithString = O({
         name: O({
-          first: S().required().meta({ _mongoose: { type: "String" }}),
-        }),
+          first: S()
+            .required()
+            .meta({ _mongoose: { type: "String" } })
+        })
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithString);
@@ -621,8 +623,8 @@ describe("Joigoose integration tests", () => {
 
       const newUser = new User({
         name: {
-          first: "Barry",
-        },
+          first: "Barry"
+        }
       });
 
       await newUser.validate();
@@ -633,7 +635,7 @@ describe("Joigoose integration tests", () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId" }})
+          .meta({ _mongoose: { type: "ObjectId" } })
           .required(),
         name: O({
           first: S().required(),
@@ -664,7 +666,7 @@ describe("Joigoose integration tests", () => {
       const hobbiesSchema = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" }})
+          .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" } })
           .required(),
         name: S().required()
       });
@@ -696,7 +698,7 @@ describe("Joigoose integration tests", () => {
       const hobbiesSchema = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" }})
+          .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" } })
           .required(),
         name: S().required()
       });
@@ -728,11 +730,11 @@ describe("Joigoose integration tests", () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId" }}),
+          .meta({ _mongoose: { type: "ObjectId" } }),
         hobbies: A().items(
           S()
             .regex(/^[0-9a-fA-F]{24}$/)
-            .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" }})
+            .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" } })
         )
       });
 
@@ -920,7 +922,7 @@ describe("Joigoose integration tests", () => {
         favourite_colours: A().items({ name: S(), hex: S() }),
         addresses: A()
           .items({ line1: S(), line2: S() })
-          .meta({ _mongoose: { _id: true }})
+          .meta({ _mongoose: { _id: true } })
       });
     });
 
@@ -971,7 +973,11 @@ describe("Joigoose integration tests", () => {
       joiUserSchema = O({
         addresses: A()
           .items({ line1: S(), line2: S() })
-          .meta({ test: false, options: { name: "Test" }, _mongoose: { _id: true }})
+          .meta({
+            test: false,
+            options: { name: "Test" },
+            _mongoose: { _id: true }
+          })
       });
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("UserWithOtherMetas", mongooseUserSchema);
@@ -998,7 +1004,7 @@ describe("Joigoose integration tests", () => {
       joiUserSchema = O({
         addresses: A()
           .items({ line1: S(), line2: S() })
-          .meta({ test: false, options: { name: "Test" }})
+          .meta({ test: false, options: { name: "Test" } })
       });
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("UserWithOtherDiffMetas", mongooseUserSchema);
