@@ -60,7 +60,9 @@ var joiUserSchema = Joi.object({
   email: Joi.string()
     .email()
     .required(),
-  bestFriend: Joi.string().meta({ type: "ObjectId", ref: "User" }),
+  bestFriend: Joi.string().meta({
+    _mongoose: { type: "ObjectId", ref: "User" }
+  }),
   metaInfo: Joi.any(),
   addresses: Joi.array()
     .items({

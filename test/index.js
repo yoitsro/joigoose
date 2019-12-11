@@ -147,7 +147,7 @@ describe("Joigoose converter", () => {
       O({
         m_id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ type: "ObjectId", ref: "Merchant" })
+          .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" }})
       })
     );
 
@@ -164,7 +164,7 @@ describe("Joigoose converter", () => {
           O({
             _id: S()
               .regex(/^[0-9a-fA-F]{24}$/)
-              .meta({ type: "ObjectId", ref: "Merchant" }),
+              .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" }}),
             name: S()
           })
         )
@@ -185,7 +185,7 @@ describe("Joigoose converter", () => {
         O({
           _id: S()
             .regex(/^[0-9a-fA-F]{24}$/)
-            .meta({ type: "ObjectId", ref: "Merchant" }),
+            .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" }}),
           name: S()
         })
       )
@@ -350,7 +350,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with metadata to a Mongoose schema including the metadata", () => {
     const output = Joigoose.convert(
       O({
-        name: S().meta({ index: true })
+        name: S().meta({ _mongoose: { index: true }})
       })
     );
 
@@ -363,8 +363,8 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         name: S()
-          .meta({ index: true })
-          .meta({ bud: true })
+          .meta({ _mongoose: { index: true }})
+          .meta({ _mongoose: { bud: true }})
       })
     );
 
@@ -378,7 +378,7 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         name: S()
-          .meta({ index: true })
+          .meta({ _mongoose: { index: true }})
           .meta("no no no")
       })
     );
@@ -416,7 +416,7 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         name: S()
-          .meta({ index: true })
+          .meta({ _mongoose: { index: true }})
           .meta("no no no")
       })
     );
@@ -583,7 +583,7 @@ describe("Joigoose integration tests", () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ type: "ObjectId" })
+          .meta({ _mongoose: { type: "ObjectId" }})
           .required(),
         name: O({
           first: S().required(),
@@ -613,7 +613,7 @@ describe("Joigoose integration tests", () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ type: "ObjectId" })
+          .meta({ _mongoose: { type: "ObjectId" }})
           .required(),
         name: O({
           first: S().required(),
@@ -644,7 +644,7 @@ describe("Joigoose integration tests", () => {
       const hobbiesSchema = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ type: "ObjectId", ref: "Hobby" })
+          .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" }})
           .required(),
         name: S().required()
       });
@@ -676,7 +676,7 @@ describe("Joigoose integration tests", () => {
       const hobbiesSchema = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ type: "ObjectId", ref: "Hobby" })
+          .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" }})
           .required(),
         name: S().required()
       });
@@ -708,11 +708,11 @@ describe("Joigoose integration tests", () => {
       const joiUserSchemaWithObjectId = O({
         _id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ type: "ObjectId" }),
+          .meta({ _mongoose: { type: "ObjectId" }}),
         hobbies: A().items(
           S()
             .regex(/^[0-9a-fA-F]{24}$/)
-            .meta({ type: "ObjectId", ref: "Hobby" })
+            .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" }})
         )
       });
 
@@ -900,7 +900,7 @@ describe("Joigoose integration tests", () => {
         favourite_colours: A().items({ name: S(), hex: S() }),
         addresses: A()
           .items({ line1: S(), line2: S() })
-          .meta({ _id: true })
+          .meta({ _mongoose: { _id: true }})
       });
     });
 
