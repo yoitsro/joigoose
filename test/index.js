@@ -946,5 +946,32 @@ describe("Joigoose integration tests", () => {
 
       expect(newUser.addresses[0]._id).to.exist();
     });
+
+    it("should generate and validate a schema using meta keys other than _mongoose", async () => {
+      joiUserSchema = O({
+        addresses: A()
+          .items({ line1: S(), line2: S() })
+          .meta({ test: false, options: { name: "Test" }, _mongoose: { _id: true }})
+      });
+      const mongooseUserSchema = Joigoose.convert(joiUserSchema);
+      const User = Mongoose.model("UserWithOtherMetas", mongooseUserSchema);
+
+      const newUser = new User({
+        addresses: [
+          {
+            line1: "line1",
+            line2: "line2"
+          },
+          {
+            line1: "street",
+            line2: "apartment"
+          }
+        ]
+      });
+
+      await newUser.validate();
+
+      expect(newUser.addresses[0]._id).to.exist();
+    });
   });
 });
