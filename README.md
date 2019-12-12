@@ -69,7 +69,7 @@ var joiUserSchema = Joi.object({
       line1: Joi.string().required(),
       line2: Joi.string()
     })
-    .meta({ _id: false, timestamps: true })
+    .meta({ _mongoose: { _id: false, timestamps: true }})
 });
 ```
 
