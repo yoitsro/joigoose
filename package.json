@@ -27,7 +27,7 @@
   },
   "homepage": "https://github.com/yoitsro/joigoose",
   "engines": {
-    "node": ">=9"
+    "node": ">=10"
   },
   "config": {
     "commitizen": {

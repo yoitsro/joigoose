@@ -1,8 +1,7 @@
 language: node_js
-sudo: false
+os: linux
 
 node_js:
-  - "9"
   - "10"
   - "11"
   - "12"
@@ -17,8 +16,7 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        script:
-          - npx semantic-release
+        script: npx semantic-release
 
 cache:
   npm: false
