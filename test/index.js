@@ -1026,3 +1026,18 @@ describe("Joigoose integration tests", () => {
     });
   });
 });
+
+describe("Joigoose custom conversion options", () => {
+  let Joigoose;
+
+  before(() => {
+    Joigoose = require("../lib")(Mongoose);
+  });
+
+  it("should use custom typeKey in conversion", () => {
+    const output = Joigoose.convert(S(), { typeKey: "$type" });
+    expect(output.$type).to.equal(String);
+    expect(output.type).to.equal(undefined);
+    expect(output.validate).to.exist();
+  });
+});

@@ -38,7 +38,7 @@ const Joigoose = require("joigoose")(Mongoose, { convert: false });
 const Mongoose = require("mongoose");
 const Joigoose = require("joigoose")(Mongoose, null, {
   _id: false,
-  timestamps: false
+  timestamps: false,
 });
 ```
 
@@ -55,28 +55,46 @@ Ideally, Joi schemas shouldn't have to contain Mongoose specific types, such as 
 var joiUserSchema = Joi.object({
   name: Joi.object({
     first: Joi.string().required(),
-    last: Joi.string().required()
+    last: Joi.string().required(),
   }),
   email: Joi.string()
     .email()
     .required(),
   bestFriend: Joi.string().meta({
-    _mongoose: { type: "ObjectId", ref: "User" }
+    _mongoose: { type: "ObjectId", ref: "User" },
   }),
   metaInfo: Joi.any(),
   addresses: Joi.array()
     .items({
       line1: Joi.string().required(),
-      line2: Joi.string()
+      line2: Joi.string(),
     })
-    .meta({ _mongoose: { _id: false, timestamps: true }})
+    .meta({ _mongoose: { _id: false, timestamps: true } }),
 });
 ```
 
 ### 3. Convert your Joi schema to a Mongoose-style schema
 
 ```javascript
-var mongooseUserSchema = new Mongoose.Schema(Joigoose.convert(joiUserSchema));
+var mongooseUserSchema = new Mongoose.Schema(
+  Joigoose.convert(joiUserSchema, options)
+);
+```
+
+#### Conversion options
+
+Options can be passed to the convert method as an object. Valid options are described below.
+
+| Key     | Type   | Default | Description                                                                                                                 |
+| ------- | ------ | ------- | --------------------------------------------------------------------------------------------------------------------------- |
+| typeKey | String | "type"  | The name of the key used for [specifying the type](https://mongoosejs.com/docs/guide.html#typeKey) in the generated schema. |
+
+##### Example:
+
+```javascript
+{
+  typeKey: '$type',
+}
 ```
 
 ### 4. Create your model
@@ -91,12 +109,12 @@ User = Mongoose.model("User", mongooseUserSchema);
 var aGoodUser = new User({
   name: {
     first: "Barry",
-    last: "White"
+    last: "White",
   },
   email: "barry@white.com",
   metaInfo: {
-    hobbies: ["cycling", "dancing", "listening to Shpongle"]
-  }
+    hobbies: ["cycling", "dancing", "listening to Shpongle"],
+  },
 });
 
 aGoodUser.save(function(err, result) {
@@ -106,9 +124,9 @@ aGoodUser.save(function(err, result) {
 var aBadUser = new User({
   name: {
     first: "Barry",
-    last: "White"
+    last: "White",
   },
-  email: "Im not an email address!"
+  email: "Im not an email address!",
 });
 
 aBadUser.save(function(err, result) {
