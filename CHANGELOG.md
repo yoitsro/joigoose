@@ -1,3 +1,10 @@
+# [7.1.0](https://github.com/yoitsro/joigoose/compare/v7.0.0...v7.1.0) (2020-06-16)
+
+
+### Features
+
+* allow custom typeKey as option to convert method ([1f1ad4f](https://github.com/yoitsro/joigoose/commit/1f1ad4f01df95331239b178e9d49b3215780a5ab))
+
 # [7.0.0](https://github.com/yoitsro/joigoose/compare/v6.2.0...v7.0.0) (2020-02-19)
 
 
