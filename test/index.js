@@ -1035,9 +1035,64 @@ describe("Joigoose custom conversion options", () => {
   });
 
   it("should use custom typeKey in conversion", () => {
-    const output = Joigoose.convert(S(), { typeKey: "$type" });
-    expect(output.$type).to.equal(String);
-    expect(output.type).to.equal(undefined);
-    expect(output.validate).to.exist();
+    const testJoiSchema = O().keys({
+      testString: S(),
+      testNumber: N(),
+      testDate: D(),
+      testBoolean: B(),
+      testObject: O().keys({
+        nestedTestString: S(),
+        nestedTestNumber: N(),
+        nestedTestDate: D(),
+        nestedTestBoolean: B()
+      }),
+      testStringArray: A().items(S()),
+      testNumberArray: A().items(N()),
+      testDateArray: A().items(D()),
+      testBooleanArray: A().items(B())
+    });
+    const output = Joigoose.convert(testJoiSchema, { typeKey: "$type" });
+
+    // Custom typeKey exists and specifies the correct type
+    expect(output.testString.$type).to.equal(String);
+    expect(output.testNumber.$type).to.equal(Number);
+    expect(output.testDate.$type).to.equal(Date);
+    expect(output.testBoolean.$type).to.equal(Boolean);
+    expect(output.testObject.nestedTestString.$type).to.equal(String);
+    expect(output.testObject.nestedTestNumber.$type).to.equal(Number);
+    expect(output.testObject.nestedTestDate.$type).to.equal(Date);
+    expect(output.testObject.nestedTestBoolean.$type).to.equal(Boolean);
+    expect(output.testStringArray.$type[0].$type).to.equal(String);
+    expect(output.testNumberArray.$type[0].$type).to.equal(Number);
+    expect(output.testDateArray.$type[0].$type).to.equal(Date);
+    expect(output.testBooleanArray.$type[0].$type).to.equal(Boolean);
+
+    // Default typeKey does not exist
+    expect(output.testString.type).to.not.exist();
+    expect(output.testNumber.type).to.not.exist();
+    expect(output.testDate.type).to.not.exist();
+    expect(output.testBoolean.type).to.not.exist();
+    expect(output.testObject.nestedTestString.type).to.not.exist();
+    expect(output.testObject.nestedTestNumber.type).to.not.exist();
+    expect(output.testObject.nestedTestDate.type).to.not.exist();
+    expect(output.testObject.nestedTestBoolean.type).to.not.exist();
+    expect(output.testStringArray.$type[0].type).to.not.exist();
+    expect(output.testNumberArray.$type[0].type).to.not.exist();
+    expect(output.testDateArray.$type[0].type).to.not.exist();
+    expect(output.testBooleanArray.$type[0].type).to.not.exist();
+
+    // .validate() should exist
+    expect(output.testString.validate).to.exist();
+    expect(output.testNumber.validate).to.exist();
+    expect(output.testDate.validate).to.exist();
+    expect(output.testBoolean.validate).to.exist();
+    expect(output.testObject.nestedTestString.validate).to.exist();
+    expect(output.testObject.nestedTestNumber.validate).to.exist();
+    expect(output.testObject.nestedTestDate.validate).to.exist();
+    expect(output.testObject.nestedTestBoolean.validate).to.exist();
+    expect(output.testStringArray.$type[0].validate).to.exist();
+    expect(output.testNumberArray.$type[0].validate).to.exist();
+    expect(output.testDateArray.$type[0].validate).to.exist();
+    expect(output.testBooleanArray.$type[0].validate).to.exist();
   });
 });
