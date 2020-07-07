@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/yoitsro/joigoose/compare/v7.1.0...v7.1.1) (2020-07-07)
+
+
+### Bug Fixes
+
+* typeKey working as intended with nested types ([d97d37c](https://github.com/yoitsro/joigoose/commit/d97d37c11c7409f7182a7ccb0ec4885fa32fc897))
+
 # [7.1.0](https://github.com/yoitsro/joigoose/compare/v7.0.0...v7.1.0) (2020-06-16)
 
 
