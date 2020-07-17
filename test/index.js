@@ -82,6 +82,12 @@ describe("Joigoose converter", () => {
     expect(output.type).to.equal(Mongoose.Schema.Types.Mixed);
   });
 
+  it("should convert a Joi non-empty object with unknown flag to Mixed", () => {
+    const output = Joigoose.convert(O({ foo: S(), bar: S() }).unknown());
+
+    expect(output.type).to.equal(Mongoose.Schema.Types.Mixed);
+  });
+
   it("should convert a Joi object with a string to a Mongoose schema", () => {
     const output = Joigoose.convert(O({ name: S() }));
 
