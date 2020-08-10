@@ -29,14 +29,14 @@ describe("Joigoose initializer", () => {
     const Joigoose = require("../lib")(Mongoose, { convert: false });
 
     const schemaWithAString = O({
-      favouriteHex: S().lowercase()
+      favouriteHex: S().lowercase(),
     });
 
     const mongooseUserSchema = Joigoose.convert(schemaWithAString);
     const User = Mongoose.model("User4", mongooseUserSchema);
 
     const newUser = new User({
-      favouriteHex: "ABCDEF"
+      favouriteHex: "ABCDEF",
     });
 
     try {
@@ -153,7 +153,7 @@ describe("Joigoose converter", () => {
       O({
         m_id: S()
           .regex(/^[0-9a-fA-F]{24}$/)
-          .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } })
+          .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } }),
       })
     );
 
@@ -171,9 +171,9 @@ describe("Joigoose converter", () => {
             _id: S()
               .regex(/^[0-9a-fA-F]{24}$/)
               .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } }),
-            name: S()
+            name: S(),
           })
-        )
+        ),
       })
     );
 
@@ -183,7 +183,7 @@ describe("Joigoose converter", () => {
 
   it("should convert a Joi object with an array containing an ObjectId added after the initial object was set up to a Mongoose schema", () => {
     const schema = O({
-      name: S()
+      name: S(),
     });
 
     const updatedSchema = schema.keys({
@@ -192,9 +192,9 @@ describe("Joigoose converter", () => {
           _id: S()
             .regex(/^[0-9a-fA-F]{24}$/)
             .meta({ _mongoose: { type: "ObjectId", ref: "Merchant" } }),
-          name: S()
+          name: S(),
         })
-      )
+      ),
     });
 
     const output = Joigoose.convert(updatedSchema);
@@ -206,7 +206,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with a Mixed type to a Mongoose schema", () => {
     const output = Joigoose.convert(
       O({
-        other_info: Any()
+        other_info: Any(),
       })
     );
 
@@ -217,7 +217,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with a boolean to a Mongoose schema", () => {
     const output = Joigoose.convert(
       O({
-        enabled: B()
+        enabled: B(),
       })
     );
 
@@ -277,9 +277,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with an array of mixed types to a Mongoose schema", () => {
     const output = Joigoose.convert(
       O({
-        hobbies: A()
-          .single()
-          .items(S(), N())
+        hobbies: A().single().items(S(), N()),
       })
     );
 
@@ -291,7 +289,7 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(
       O({
         age: N(),
-        name: S()
+        name: S(),
       })
     );
 
@@ -305,8 +303,8 @@ describe("Joigoose converter", () => {
       O({
         name: O({
           first: S(),
-          last: S()
-        })
+          last: S(),
+        }),
       })
     );
 
@@ -321,8 +319,8 @@ describe("Joigoose converter", () => {
       O({
         name: O({
           first: S(),
-          last: S()
-        }).required()
+          last: S(),
+        }).required(),
       })
     );
 
@@ -332,7 +330,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with a required string to a Mongoose schema", () => {
     const output = Joigoose.convert(
       O({
-        name: S().required()
+        name: S().required(),
       })
     );
 
@@ -344,7 +342,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with a default value to a Mongoose schema", () => {
     const output = Joigoose.convert(
       O({
-        name: S().default("Barry White")
+        name: S().default("Barry White"),
       })
     );
 
@@ -356,7 +354,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with metadata to a Mongoose schema including the metadata", () => {
     const output = Joigoose.convert(
       O({
-        name: S().meta({ _mongoose: { index: true } })
+        name: S().meta({ _mongoose: { index: true } }),
       })
     );
 
@@ -370,7 +368,7 @@ describe("Joigoose converter", () => {
       O({
         name: S()
           .meta({ _mongoose: { index: true } })
-          .meta({ _mongoose: { bud: true } })
+          .meta({ _mongoose: { bud: true } }),
       })
     );
 
@@ -385,7 +383,7 @@ describe("Joigoose converter", () => {
       O({
         name: S()
           .meta({ _mongoose: { index: true } })
-          .meta("no no no")
+          .meta("no no no"),
       })
     );
 
@@ -397,7 +395,7 @@ describe("Joigoose converter", () => {
   it("should convert a Joi object with metadata to a Mongoose schema excluding metadata strings", () => {
     const output = Joigoose.convert(
       O({
-        name: S().meta("no no no")
+        name: S().meta("no no no"),
       })
     );
 
@@ -409,7 +407,7 @@ describe("Joigoose converter", () => {
     expect(() => {
       Joigoose.convert(
         O({
-          image: Y()
+          image: Y(),
         })
       );
     }).to.throw(
@@ -423,7 +421,7 @@ describe("Joigoose converter", () => {
       O({
         name: S()
           .meta({ _mongoose: { index: true } })
-          .meta("no no no")
+          .meta("no no no"),
       })
     );
 
@@ -467,12 +465,10 @@ describe("Joigoose integration tests", () => {
       joiUserSchema = O({
         name: O({
           first: S().required(),
-          last: S().required()
+          last: S().required(),
         }),
-        email: S()
-          .email()
-          .required(),
-        verified: B()
+        email: S().email().required(),
+        verified: B(),
       });
     });
 
@@ -483,17 +479,17 @@ describe("Joigoose integration tests", () => {
       const newUser = new User({
         name: {
           first: "Barry",
-          last: "White"
+          last: "White",
         },
         email: "barry@white.com",
-        verified: false
+        verified: false,
       });
 
       await newUser.validate();
     });
 
     it("should generate and validate a schema using a async/sync Joi.any().external(method, [description])", async () => {
-      const check = async id => {
+      const check = async (id) => {
         await Hoek.wait();
         if (id === "valid") {
           return "verified";
@@ -504,28 +500,26 @@ describe("Joigoose integration tests", () => {
         throw new Error("Invalid id");
       };
 
-      const append = id => {
+      const append = (id) => {
         return id + "!";
       };
 
       const schema = O({
-        id: S()
-          .external(check)
-          .external(append)
+        id: S().external(check).external(append),
       });
 
       const mongooseSchema = Joigoose.convert(schema);
       const Schema = Mongoose.model("Schema", mongooseSchema);
 
       const fixture = new Schema({
-        id: "valid"
+        id: "valid",
       });
 
       await fixture.validate();
     });
 
     it("should generate and unsuccessfully validate a schema using a async/sync Joi.any().external(method, [description])", async () => {
-      const check = async id => {
+      const check = async (id) => {
         await Hoek.wait();
         if (id === "valid") {
           return "verified";
@@ -536,21 +530,19 @@ describe("Joigoose integration tests", () => {
         throw new Error("Invalid id");
       };
 
-      const append = id => {
+      const append = (id) => {
         return id + "!";
       };
 
       const schema = O({
-        id: S()
-          .external(check)
-          .external(append)
+        id: S().external(check).external(append),
       });
 
       const mongooseSchema = Joigoose.convert(schema);
       const Schema = Mongoose.model("Schema2", mongooseSchema);
 
       const fixture = new Schema({
-        id: "invalid"
+        id: "invalid",
       });
 
       try {
@@ -570,9 +562,9 @@ describe("Joigoose integration tests", () => {
       const newUser = new User({
         name: {
           first: "Barry",
-          last: "White"
+          last: "White",
         },
-        email: "Im not an email address!"
+        email: "Im not an email address!",
       });
 
       try {
@@ -593,11 +585,9 @@ describe("Joigoose integration tests", () => {
           .required(),
         name: O({
           first: S().required(),
-          last: S().required()
+          last: S().required(),
         }),
-        email: S()
-          .email()
-          .required()
+        email: S().email().required(),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
@@ -607,9 +597,9 @@ describe("Joigoose integration tests", () => {
         _id: "abcdef012345abcdef012345",
         name: {
           first: "Barry",
-          last: "White"
+          last: "White",
         },
-        email: "barry@white.com"
+        email: "barry@white.com",
       });
 
       await newUser.validate();
@@ -620,8 +610,8 @@ describe("Joigoose integration tests", () => {
         name: O({
           first: S()
             .required()
-            .meta({ _mongoose: { type: "String" } })
-        })
+            .meta({ _mongoose: { type: "String" } }),
+        }),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithString);
@@ -629,8 +619,8 @@ describe("Joigoose integration tests", () => {
 
       const newUser = new User({
         name: {
-          first: "Barry"
-        }
+          first: "Barry",
+        },
       });
 
       await newUser.validate();
@@ -645,11 +635,9 @@ describe("Joigoose integration tests", () => {
           .required(),
         name: O({
           first: S().required(),
-          last: S().required()
+          last: S().required(),
         }),
-        email: S()
-          .email()
-          .required()
+        email: S().email().required(),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
@@ -659,9 +647,9 @@ describe("Joigoose integration tests", () => {
         _id: new Mongoose.Types.ObjectId("abcdef012345abcdef012345"),
         name: {
           first: "Barry",
-          last: "White"
+          last: "White",
         },
-        email: "barry@white.com"
+        email: "barry@white.com",
       });
 
       await newUser.validate();
@@ -674,11 +662,11 @@ describe("Joigoose integration tests", () => {
           .regex(/^[0-9a-fA-F]{24}$/)
           .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" } })
           .required(),
-        name: S().required()
+        name: S().required(),
       });
 
       const joiUserSchemaWithObjectId = O({
-        hobbies: A().items(hobbiesSchema)
+        hobbies: A().items(hobbiesSchema),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
@@ -688,13 +676,13 @@ describe("Joigoose integration tests", () => {
         hobbies: [
           {
             _id: "abcdef012345abcdef012345",
-            name: "cycling"
+            name: "cycling",
           },
           {
             _id: "abcdef012345abcdef01234a",
-            name: "running"
-          }
-        ]
+            name: "running",
+          },
+        ],
       });
 
       await newUser.validate();
@@ -706,11 +694,11 @@ describe("Joigoose integration tests", () => {
           .regex(/^[0-9a-fA-F]{24}$/)
           .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" } })
           .required(),
-        name: S().required()
+        name: S().required(),
       });
 
       const joiUserSchemaWithObjectId = O({
-        hobbies: A().items(hobbiesSchema)
+        hobbies: A().items(hobbiesSchema),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
@@ -720,13 +708,13 @@ describe("Joigoose integration tests", () => {
         hobbies: [
           {
             _id: new Mongoose.Types.ObjectId("abcdef012345abcdef012345"),
-            name: "cycling"
+            name: "cycling",
           },
           {
             _id: new Mongoose.Types.ObjectId("abcdef012345abcdef01234a"),
-            name: "running"
-          }
-        ]
+            name: "running",
+          },
+        ],
       });
 
       await newUser.validate();
@@ -741,7 +729,7 @@ describe("Joigoose integration tests", () => {
           S()
             .regex(/^[0-9a-fA-F]{24}$/)
             .meta({ _mongoose: { type: "ObjectId", ref: "Hobby" } })
-        )
+        ),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchemaWithObjectId);
@@ -750,8 +738,8 @@ describe("Joigoose integration tests", () => {
       const newUser = new User({
         hobbies: [
           new Mongoose.Types.ObjectId("abcdef012345abcdef012345"),
-          new Mongoose.Types.ObjectId("abcdef012345abcdef01234a")
-        ]
+          new Mongoose.Types.ObjectId("abcdef012345abcdef01234a"),
+        ],
       });
 
       await newUser.validate();
@@ -761,11 +749,11 @@ describe("Joigoose integration tests", () => {
       const joiUserSchema = O({
         name: O({
           first: S().default("Barry"),
-          last: S().default("White")
+          last: S().default("White"),
         }),
         // registered: B().default(false),
         age: N().default(21),
-        hobbies: A().default(["cycling"])
+        hobbies: A().default(["cycling"]),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
@@ -784,14 +772,14 @@ describe("Joigoose integration tests", () => {
 
     it("should make sure value exists in the wrapper", async () => {
       const joiUserSchema = O({
-        name: S()
+        name: S(),
       });
 
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("User6", mongooseUserSchema);
 
       const newUser = new User({
-        name: null
+        name: null,
       });
 
       try {
@@ -807,14 +795,8 @@ describe("Joigoose integration tests", () => {
       const schema = O({
         delivery_period: L(
           O({
-            min: N()
-              .min(0)
-              .integer()
-              .empty([null, ""]),
-            max: N()
-              .min(0)
-              .integer()
-              .empty([null, ""])
+            min: N().min(0).integer().empty([null, ""]),
+            max: N().min(0).integer().empty([null, ""]),
           }).description(
             "A range of days relative to now when this order will arrive."
           ),
@@ -826,7 +808,7 @@ describe("Joigoose integration tests", () => {
             .description(
               "A absolute day of the week when this order will arrive."
             )
-        )
+        ),
       });
 
       const mongooseSchema = Joigoose.convert(schema);
@@ -835,16 +817,16 @@ describe("Joigoose integration tests", () => {
       const deliveryMethod = new DeliveryMethod({
         delivery_period: {
           min: 1,
-          max: 2
-        }
+          max: 2,
+        },
       });
 
       const deliveryMethod2 = new DeliveryMethod({
-        delivery_period: 5
+        delivery_period: 5,
       });
 
       const deliveryMethod3 = new DeliveryMethod({
-        delivery_period: "lol"
+        delivery_period: "lol",
       });
 
       await deliveryMethod.validate();
@@ -862,30 +844,18 @@ describe("Joigoose integration tests", () => {
       const schema = O({
         delivery_period: L(
           O({
-            min: N()
-              .min(0)
-              .integer()
-              .empty([null, ""]),
-            max: N()
-              .min(0)
-              .integer()
-              .empty([null, ""])
+            min: N().min(0).integer().empty([null, ""]),
+            max: N().min(0).integer().empty([null, ""]),
           }).description(
             "A range of days relative to now when this order will arrive."
           ),
           O({
-            lower: N()
-              .min(0)
-              .integer()
-              .empty([null, ""]),
-            upper: N()
-              .min(0)
-              .integer()
-              .empty([null, ""])
+            lower: N().min(0).integer().empty([null, ""]),
+            upper: N().min(0).integer().empty([null, ""]),
           }).description(
             "A range of days relative to now when this order will arrive."
           )
-        )
+        ),
       });
 
       const mongooseSchema = Joigoose.convert(schema);
@@ -894,19 +864,19 @@ describe("Joigoose integration tests", () => {
       const deliveryMethod = new DeliveryMethod({
         delivery_period: {
           min: 1,
-          max: 2
-        }
+          max: 2,
+        },
       });
 
       const deliveryMethod2 = new DeliveryMethod({
         delivery_period: {
           lower: 10,
-          upper: 20
-        }
+          upper: 20,
+        },
       });
 
       const deliveryMethod3 = new DeliveryMethod({
-        delivery_period: "lol"
+        delivery_period: "lol",
       });
 
       await deliveryMethod.validate();
@@ -928,7 +898,7 @@ describe("Joigoose integration tests", () => {
         favourite_colours: A().items({ name: S(), hex: S() }),
         addresses: A()
           .items({ line1: S(), line2: S() })
-          .meta({ _mongoose: { _id: true } })
+          .meta({ _mongoose: { _id: true } }),
       });
     });
 
@@ -940,13 +910,13 @@ describe("Joigoose integration tests", () => {
         favourite_colours: [
           {
             name: "red",
-            hex: "ff0000"
+            hex: "ff0000",
           },
           {
             name: "green",
-            hex: "00ff00"
-          }
-        ]
+            hex: "00ff00",
+          },
+        ],
       });
 
       await newUser.validate();
@@ -961,13 +931,13 @@ describe("Joigoose integration tests", () => {
         addresses: [
           {
             line1: "line1",
-            line2: "line2"
+            line2: "line2",
           },
           {
             line1: "street",
-            line2: "apartment"
-          }
-        ]
+            line2: "apartment",
+          },
+        ],
       });
 
       await newUser.validate();
@@ -982,8 +952,8 @@ describe("Joigoose integration tests", () => {
           .meta({
             test: false,
             options: { name: "Test" },
-            _mongoose: { _id: true }
-          })
+            _mongoose: { _id: true },
+          }),
       });
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("UserWithOtherMetas", mongooseUserSchema);
@@ -992,13 +962,13 @@ describe("Joigoose integration tests", () => {
         addresses: [
           {
             line1: "line1",
-            line2: "line2"
+            line2: "line2",
           },
           {
             line1: "street",
-            line2: "apartment"
-          }
-        ]
+            line2: "apartment",
+          },
+        ],
       });
 
       await newUser.validate();
@@ -1010,7 +980,7 @@ describe("Joigoose integration tests", () => {
       joiUserSchema = O({
         addresses: A()
           .items({ line1: S(), line2: S() })
-          .meta({ test: false, options: { name: "Test" } })
+          .meta({ test: false, options: { name: "Test" } }),
       });
       const mongooseUserSchema = Joigoose.convert(joiUserSchema);
       const User = Mongoose.model("UserWithOtherDiffMetas", mongooseUserSchema);
@@ -1019,13 +989,13 @@ describe("Joigoose integration tests", () => {
         addresses: [
           {
             line1: "line1",
-            line2: "line2"
+            line2: "line2",
           },
           {
             line1: "street",
-            line2: "apartment"
-          }
-        ]
+            line2: "apartment",
+          },
+        ],
       });
 
       await newUser.validate();
@@ -1050,12 +1020,12 @@ describe("Joigoose custom conversion options", () => {
         nestedTestString: S(),
         nestedTestNumber: N(),
         nestedTestDate: D(),
-        nestedTestBoolean: B()
+        nestedTestBoolean: B(),
       }),
       testStringArray: A().items(S()),
       testNumberArray: A().items(N()),
       testDateArray: A().items(D()),
-      testBooleanArray: A().items(B())
+      testBooleanArray: A().items(B()),
     });
     const output = Joigoose.convert(testJoiSchema, { typeKey: "$type" });
 
