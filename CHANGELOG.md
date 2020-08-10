@@ -1,3 +1,15 @@
+# [8.0.0](https://github.com/yoitsro/joigoose/compare/v7.1.2...v8.0.0) (2020-08-10)
+
+
+### chore
+
+* stop using scoped version of joi ([58bd0d9](https://github.com/yoitsro/joigoose/commit/58bd0d9920c60be78a5b96fd75fb8dcaab4687d9)), closes [#46](https://github.com/yoitsro/joigoose/issues/46)
+
+
+### BREAKING CHANGES
+
+* @hapi/joi is no longer compatible with joigoose.
+
 ## [7.1.2](https://github.com/yoitsro/joigoose/compare/v7.1.1...v7.1.2) (2020-08-10)
 
 
