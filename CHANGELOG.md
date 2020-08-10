@@ -1,3 +1,10 @@
+## [7.1.2](https://github.com/yoitsro/joigoose/compare/v7.1.1...v7.1.2) (2020-08-10)
+
+
+### Bug Fixes
+
+* object with unknown flag set to Mixed ([4eba3f9](https://github.com/yoitsro/joigoose/commit/4eba3f925520340abcbd15a941fabf08c97bc698))
+
 ## [7.1.1](https://github.com/yoitsro/joigoose/compare/v7.1.0...v7.1.1) (2020-07-07)
 
 
