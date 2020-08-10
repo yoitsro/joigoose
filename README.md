@@ -10,6 +10,8 @@ Joi validation for your Mongoose models without the hassle of maintaining two sc
 
 ## Installation
 
+⚠️ WARNING! Use the [v7.x.x branch](https://github.com/yoitsro/joigoose/tree/v7.x.x) of Joigoose if you're still using the scoped version of [Joi](https://www.npmjs.com/package/@hapi/joi).
+
 ```
 npm install joigoose
 ```
@@ -57,9 +59,7 @@ var joiUserSchema = Joi.object({
     first: Joi.string().required(),
     last: Joi.string().required(),
   }),
-  email: Joi.string()
-    .email()
-    .required(),
+  email: Joi.string().email().required(),
   bestFriend: Joi.string().meta({
     _mongoose: { type: "ObjectId", ref: "User" },
   }),
@@ -117,7 +117,7 @@ var aGoodUser = new User({
   },
 });
 
-aGoodUser.save(function(err, result) {
+aGoodUser.save(function (err, result) {
   // -> Success!
 });
 
@@ -129,7 +129,7 @@ var aBadUser = new User({
   email: "Im not an email address!",
 });
 
-aBadUser.save(function(err, result) {
+aBadUser.save(function (err, result) {
   // -> Error!
   // {
   //     "message": "User validation failed",
