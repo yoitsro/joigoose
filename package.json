@@ -35,21 +35,21 @@
     }
   },
   "dependencies": {
-    "@hapi/hoek": "^9.0.4",
-    "joi": "^17.2.0"
+    "@hapi/hoek": "^9.1.1",
+    "joi": "^17.3.0"
   },
   "devDependencies": {
     "@hapi/code": "^8.0.2",
-    "@hapi/lab": "^23.0.0",
+    "@hapi/lab": "^24.1.0",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/git": "^9.0.0",
-    "cz-conventional-changelog": "^3.2.0",
-    "eslint": "^7.6.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.17.0",
     "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "mongoose": "^5.9.28",
-    "prettier": "^2.0.5",
-    "semantic-release": "^17.1.1"
+    "eslint-plugin-prettier": "^3.3.1",
+    "mongoose": "^5.11.11",
+    "prettier": "^2.2.1",
+    "semantic-release": "^17.3.1"
   },
   "release": {
     "plugins": [
