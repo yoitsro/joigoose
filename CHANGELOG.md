@@ -1,3 +1,10 @@
+## [8.0.1](https://github.com/yoitsro/joigoose/compare/v8.0.0...v8.0.1) (2021-01-13)
+
+
+### Bug Fixes
+
+* dependency updates ([0047fe0](https://github.com/yoitsro/joigoose/commit/0047fe0e1c2de6df582b30032d3f8eadb5ee12c7))
+
 # [8.0.0](https://github.com/yoitsro/joigoose/compare/v7.1.2...v8.0.0) (2020-08-10)
 
 
