@@ -161,3 +161,4 @@ Submit your [issues and pull requests](https://github.com/yoitsro/joigoose/issue
 - No peer based validation (`and`, `nand`, `or`, `xor`, `with`, `without`, `ref`, `assert`, `alternatives`, `when` etc)
 - No `Joi.binary` object type
 - No `Joi.func` object type
+- No `Joi.in` object type
