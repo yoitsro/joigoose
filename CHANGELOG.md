@@ -1,3 +1,10 @@
+## [8.0.2](https://github.com/yoitsro/joigoose/compare/v8.0.1...v8.0.2) (2021-06-10)
+
+
+### Bug Fixes
+
+* update vulnerable packages ([ce4d19b](https://github.com/yoitsro/joigoose/commit/ce4d19bb7c5a2cd6e5d96973974980be92488294))
+
 ## [8.0.1](https://github.com/yoitsro/joigoose/compare/v8.0.0...v8.0.1) (2021-01-13)
 
 
