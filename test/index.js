@@ -403,6 +403,27 @@ describe("Joigoose converter", () => {
     expect(output.name.validate).to.exist();
   });
 
+  it("should convert a Joi object with a array of joi objects where a field has a array of joi objects to a Mongoose schema", () => {
+
+    const innerItem = O().keys({
+      name: S(),
+    });
+
+    const item = O({
+      restrictions: O({
+        content: A().items(A().items(innerItem)),
+      }),
+    });
+
+    const output = Joigoose.convert(
+      O({
+        where: A().items(item),
+      })
+    );
+
+    expect(output.where).to.exist();
+  });
+
   it("cannot convert a Joi object with an unsupported type", () => {
     expect(() => {
       Joigoose.convert(
