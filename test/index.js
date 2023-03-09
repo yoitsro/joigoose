@@ -178,7 +178,7 @@ describe("Joigoose converter", () => {
     );
 
     expect(output.name.type).to.equal(String);
-    expect(output.merchants.type[0].paths._id.instance).to.equal("ObjectID");
+    expect(output.merchants.type[0].paths._id.instance).to.equal("ObjectId");
   });
 
   it("should convert a Joi object with an array containing an ObjectId added after the initial object was set up to a Mongoose schema", () => {
@@ -200,7 +200,7 @@ describe("Joigoose converter", () => {
     const output = Joigoose.convert(updatedSchema);
 
     expect(output.name.type).to.equal(String);
-    expect(output.merchants.type[0].paths._id.instance).to.equal("ObjectID");
+    expect(output.merchants.type[0].paths._id.instance).to.equal("ObjectId");
   });
 
   it("should convert a Joi object with a Mixed type to a Mongoose schema", () => {
